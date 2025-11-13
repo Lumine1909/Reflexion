@@ -2,6 +2,19 @@
 
 A fast implementation library for Java reflection.
 
+```kotlin
+val version = "1.0.1"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("io.github.lumine1909:reflexion:${version}")
+}
+```
+
+
 <details>
 <summary>Benchmark Results</summary>
 
