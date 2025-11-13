@@ -5,6 +5,7 @@ import sun.misc.Unsafe;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 
+@SuppressWarnings("deprecation")
 public class UnsafeUtil {
 
     public static final Unsafe UNSAFE;

@@ -9,10 +9,9 @@ import java.lang.reflect.Modifier;
 
 import static io.github.lumine1909.reflexion.UnsafeUtil.IMPL_LOOKUP;
 
-@SuppressWarnings("unchecked")
 public class LambdaMethodFactory {
 
-    public static <T> Caller<T> createCaller(Method method) {
+    public static Object createCaller(Method method) {
         return createLambda(method, createProperty(method));
     }
 
@@ -29,7 +28,7 @@ public class LambdaMethodFactory {
         return new FunctionProperty(returnType == void.class, returnType, parameterTypes);
     }
 
-    private static <T> Caller<T> createLambda(Method method, FunctionProperty property) {
+    private static Object createLambda(Method method, FunctionProperty property) {
         try {
             MethodHandles.Lookup lookup = IMPL_LOOKUP.in(method.getDeclaringClass());
             MethodHandle target = lookup.unreflect(method);
@@ -42,7 +41,7 @@ public class LambdaMethodFactory {
                 target,
                 property.instMethodType()
             );
-            return (Caller<T>) site.getTarget().invoke();
+            return site.getTarget().invoke();
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
