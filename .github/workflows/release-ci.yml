@@ -10,6 +10,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -25,11 +26,32 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build with Gradle Wrapper
+      - name: Build with Gradle Wrapper and collect JARs
         id: build
         run: |
           ./gradlew build
-          echo "::set-output name=jar_file::$(find build/libs -name '*.jar' -print -quit)"
+
+          echo "Collecting JARs from all build/libs directories..."
+          # Use find to locate jars under any build/libs folder, print null-separated
+          mapfile -d '' jars < <(find . -type f -path "*/build/libs/*.jar" -print0)
+
+          if [ "${#jars[@]}" -eq 0 ]; then
+            echo "No JARs found under any build/libs/ directory."
+            exit 1
+          fi
+
+          # Print found jars for debugging
+          printf 'Found JAR: %s\n' "${jars[@]/#./}"
+
+          # Write newline-separated list into the step output using GITHUB_OUTPUT multiline syntax
+          # This creates a multiline output named "jars" that preserves filenames with spaces.
+          echo "jars<<EOF" >> "$GITHUB_OUTPUT"
+          for j in "${jars[@]}"; do
+            # Remove leading ./ to make paths cleaner (optional)
+            p="${j#./}"
+            printf '%s\n' "$p" >> "$GITHUB_OUTPUT"
+          done
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Extract version from build.gradle.kts
         id: extract_version
@@ -64,8 +86,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: "v${{ env.VERSION }}-build-${{ env.BUILD_NUMBER }}"
-          name: "Release v${{ env.VERSION }}-build-${{ env.BUILD_NUMBER }}"
-          files: ${{ steps.build.outputs.jar_file }}
+          name: "v${{ env.VERSION }}-build-${{ env.BUILD_NUMBER }}"
+          # steps.build.outputs.jars is a multiline string (one path per line)
+          files: ${{ steps.build.outputs.jars }}
           draft: false
           prerelease: false
         env:
