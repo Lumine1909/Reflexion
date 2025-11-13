@@ -2,6 +2,8 @@ package io.github.lumine1909.reflexion.field;
 
 import java.lang.reflect.Field;
 
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+
 final class BooleanField extends UnsafeFieldHolder<Boolean> {
 
     public BooleanField(Field javaField) {
@@ -14,13 +16,13 @@ final class BooleanField extends UnsafeFieldHolder<Boolean> {
     }
 
     @Override
-    protected Boolean getInstance(Object object) {
-        return UNSAFE.getBoolean(object, objectOffset);
+    protected void setStatic(Boolean value) {
+        UNSAFE.putBoolean(staticBase, staticOffset, value);
     }
 
     @Override
-    protected void setStatic(Boolean value) {
-        UNSAFE.putBoolean(staticBase, staticOffset, value);
+    protected Boolean getInstance(Object object) {
+        return UNSAFE.getBoolean(object, objectOffset);
     }
 
     @Override

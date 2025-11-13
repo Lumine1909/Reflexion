@@ -2,6 +2,8 @@ package io.github.lumine1909.reflexion.field;
 
 import java.lang.reflect.Field;
 
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+
 final class ByteField extends UnsafeFieldHolder<Byte> {
 
     public ByteField(Field javaField) {
@@ -14,13 +16,13 @@ final class ByteField extends UnsafeFieldHolder<Byte> {
     }
 
     @Override
-    protected Byte getInstance(Object object) {
-        return UNSAFE.getByte(object, objectOffset);
+    protected void setStatic(Byte value) {
+        UNSAFE.putByte(staticBase, staticOffset, value);
     }
 
     @Override
-    protected void setStatic(Byte value) {
-        UNSAFE.putByte(staticBase, staticOffset, value);
+    protected Byte getInstance(Object object) {
+        return UNSAFE.getByte(object, objectOffset);
     }
 
     @Override

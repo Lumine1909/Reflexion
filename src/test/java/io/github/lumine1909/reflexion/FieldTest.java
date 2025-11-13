@@ -6,14 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FieldTest {
 
-
     @Test
     public void testField() {
         A a = new A();
-        Class<?> clazz = Class.of(A.class);
-        Field<Byte> fb = clazz.getField("b", byte.class).orElseThrow();
-        Field<Integer> fi = clazz.getField("i", int.class).orElseThrow();
-        Field<String> fs = clazz.getField("str", String.class).orElseThrow();
+        Field<Byte> fb = Field.of(A.class, "b", byte.class);
+        Field<Integer> fi = Field.of(A.class, "i", int.class);
+        Field<String> fs = Field.of(A.class, "str", String.class);
         assertEquals((byte) 42, fb.get(a));
         assertEquals(42, fi.get(a));
         assertEquals("42", fs.get(a));

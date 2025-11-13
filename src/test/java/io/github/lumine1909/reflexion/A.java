@@ -6,15 +6,15 @@ public class A {
     private final int i = 42;
     private String str = "42";
 
-    public String getStr() {
+    private String getStr() {
         return str;
     }
 
-    public void setStr(String str) {
+    private void setStr(String str) {
         this.str = str;
     }
 
-    public static int test() {
+    private static int test() {
         return 42;
     }
 }

@@ -21,6 +21,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
             java.lang.Class<T> clazz = (java.lang.Class<T>) java.lang.Class.forName(name, initialize, loader);
             return Optional.of(new Class<>(clazz));
         } catch (Exception e) {
+            e.printStackTrace();
             return Optional.empty();
         }
     }

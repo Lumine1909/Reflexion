@@ -1,5 +1,7 @@
 package io.github.lumine1909.reflexion.field;
 
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+
 import java.lang.reflect.Field;
 
 final class FloatField extends UnsafeFieldHolder<Float> {
@@ -14,13 +16,13 @@ final class FloatField extends UnsafeFieldHolder<Float> {
     }
 
     @Override
-    protected Float getInstance(Object object) {
-        return UNSAFE.getFloat(object, objectOffset);
+    protected void setStatic(Float value) {
+        UNSAFE.putFloat(staticBase, staticOffset, value);
     }
 
     @Override
-    protected void setStatic(Float value) {
-        UNSAFE.putFloat(staticBase, staticOffset, value);
+    protected Float getInstance(Object object) {
+        return UNSAFE.getFloat(object, objectOffset);
     }
 
     @Override

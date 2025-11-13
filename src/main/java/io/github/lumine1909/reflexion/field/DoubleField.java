@@ -2,6 +2,8 @@ package io.github.lumine1909.reflexion.field;
 
 import java.lang.reflect.Field;
 
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+
 final class DoubleField extends UnsafeFieldHolder<Double> {
 
     public DoubleField(Field javaField) {
@@ -14,13 +16,13 @@ final class DoubleField extends UnsafeFieldHolder<Double> {
     }
 
     @Override
-    protected Double getInstance(Object object) {
-        return UNSAFE.getDouble(object, objectOffset);
+    protected void setStatic(Double value) {
+        UNSAFE.putDouble(staticBase, staticOffset, value);
     }
 
     @Override
-    protected void setStatic(Double value) {
-        UNSAFE.putDouble(staticBase, staticOffset, value);
+    protected Double getInstance(Object object) {
+        return UNSAFE.getDouble(object, objectOffset);
     }
 
     @Override

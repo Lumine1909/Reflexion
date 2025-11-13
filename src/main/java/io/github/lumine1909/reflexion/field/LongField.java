@@ -2,6 +2,8 @@ package io.github.lumine1909.reflexion.field;
 
 import java.lang.reflect.Field;
 
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+
 final class LongField extends UnsafeFieldHolder<Long> {
 
     public LongField(Field javaField) {
@@ -14,13 +16,13 @@ final class LongField extends UnsafeFieldHolder<Long> {
     }
 
     @Override
-    protected Long getInstance(Object object) {
-        return UNSAFE.getLong(object, objectOffset);
+    protected void setStatic(Long value) {
+        UNSAFE.putLong(staticBase, staticOffset, value);
     }
 
     @Override
-    protected void setStatic(Long value) {
-        UNSAFE.putLong(staticBase, staticOffset, value);
+    protected Long getInstance(Object object) {
+        return UNSAFE.getLong(object, objectOffset);
     }
 
     @Override

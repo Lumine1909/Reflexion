@@ -2,6 +2,8 @@ package io.github.lumine1909.reflexion.field;
 
 import java.lang.reflect.Field;
 
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+
 final class IntField extends UnsafeFieldHolder<Integer> {
 
     public IntField(Field javaField) {
@@ -14,13 +16,13 @@ final class IntField extends UnsafeFieldHolder<Integer> {
     }
 
     @Override
-    protected Integer getInstance(Object object) {
-        return UNSAFE.getInt(object, objectOffset);
+    protected void setStatic(Integer value) {
+        UNSAFE.putInt(staticBase, staticOffset, value);
     }
 
     @Override
-    protected void setStatic(Integer value) {
-        UNSAFE.putInt(staticBase, staticOffset, value);
+    protected Integer getInstance(Object object) {
+        return UNSAFE.getInt(object, objectOffset);
     }
 
     @Override

@@ -1,22 +1,21 @@
 package io.github.lumine1909.reflexion.field;
 
-import sun.misc.Unsafe;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+
 public abstract class UnsafeFieldHolder<T> {
 
-    protected static final Unsafe UNSAFE;
+    protected final long objectOffset;
+    protected final Object staticBase;
+    protected final long staticOffset;
 
-    static {
-        try {
-            Field field$theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-            field$theUnsafe.setAccessible(true);
-            UNSAFE = (Unsafe) field$theUnsafe.get(null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @SuppressWarnings("deprecation")
+    public UnsafeFieldHolder(Field javaField) {
+        this.objectOffset = Modifier.isStatic(javaField.getModifiers()) ? -1 : UNSAFE.objectFieldOffset(javaField);
+        this.staticBase = Modifier.isStatic(javaField.getModifiers()) ? UNSAFE.staticFieldBase(javaField) : null;
+        this.staticOffset = Modifier.isStatic(javaField.getModifiers()) ? UNSAFE.staticFieldOffset(javaField) : -1;
     }
 
     public static UnsafeFieldHolder<?> createHolder(java.lang.reflect.Field field) {
@@ -36,17 +35,6 @@ public abstract class UnsafeFieldHolder<T> {
         } else {
             return new ObjectField<>(field);
         }
-    }
-
-    protected final long objectOffset;
-    protected final Object staticBase;
-    protected final long staticOffset;
-
-    @SuppressWarnings("deprecation")
-    public UnsafeFieldHolder(Field javaField) {
-        this.objectOffset = Modifier.isStatic(javaField.getModifiers()) ? -1 : UNSAFE.objectFieldOffset(javaField);
-        this.staticBase = Modifier.isStatic(javaField.getModifiers()) ? UNSAFE.staticFieldBase(javaField) : null;
-        this.staticOffset = Modifier.isStatic(javaField.getModifiers()) ? UNSAFE.staticFieldOffset(javaField) : -1;
     }
 
     public T get(Object obj) {
@@ -69,9 +57,9 @@ public abstract class UnsafeFieldHolder<T> {
 
     protected abstract T getStatic();
 
-    protected abstract T getInstance(Object object);
-
     protected abstract void setStatic(T value);
+
+    protected abstract T getInstance(Object object);
 
     protected abstract void setInstance(Object object, T value);
 }

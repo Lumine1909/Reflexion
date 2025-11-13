@@ -2,6 +2,8 @@ package io.github.lumine1909.reflexion.field;
 
 import java.lang.reflect.Field;
 
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+
 @SuppressWarnings("unchecked")
 final class ObjectField<T> extends UnsafeFieldHolder<T> {
 
@@ -15,13 +17,13 @@ final class ObjectField<T> extends UnsafeFieldHolder<T> {
     }
 
     @Override
-    protected T getInstance(Object object) {
-        return (T) UNSAFE.getObject(object, objectOffset);
+    protected void setStatic(T value) {
+        UNSAFE.putObject(staticBase, staticOffset, value);
     }
 
     @Override
-    protected void setStatic(T value) {
-        UNSAFE.putObject(staticBase, staticOffset, value);
+    protected T getInstance(Object object) {
+        return (T) UNSAFE.getObject(object, objectOffset);
     }
 
     @Override
