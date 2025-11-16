@@ -1,7 +1,12 @@
 package io.github.lumine1909.reflexion;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Optional;
+
+import static io.github.lumine1909.reflexion.UnsafeUtil.IMPL_LOOKUP;
 
 public record Class<T>(java.lang.Class<T> javaClass) {
 
@@ -57,10 +62,11 @@ public record Class<T>(java.lang.Class<T> javaClass) {
     public <S> Optional<Method<S>> getMethod(String name, java.lang.Class<S> returnType, java.lang.Class<?>... parameterTypes) {
         try {
             java.lang.reflect.Method method = javaClass.getDeclaredMethod(name, parameterTypes);
+            MethodHandle methodHandle = IMPL_LOOKUP.unreflect(method);
             if (!returnType.isAssignableFrom(method.getReturnType())) {
                 return Optional.empty();
             }
-            return Optional.of(new Method<>(method));
+            return Optional.of(new Method<>(method, Modifier.isStatic(method.getModifiers()), methodHandle));
         } catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
