@@ -9,7 +9,7 @@ public class FieldTest {
     @Test
     public void testField() {
         A a = new A();
-        Field<Byte> fb = Field.of(A.class, "b", byte.class);
+        Field<Byte> fb = Field.of("io.github.lumine1909.reflexion.A", "b", byte.class);
         Field<Integer> fi = Field.of(A.class, "i", int.class);
         Field<String> fs = Field.of(A.class, "str", String.class);
         assertEquals((byte) 42, fb.get(a));

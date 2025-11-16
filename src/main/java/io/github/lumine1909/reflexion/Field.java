@@ -18,6 +18,10 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
         return io.github.lumine1909.reflexion.Class.of(clazz).getField(name, type).orElseThrow();
     }
 
+    public static <T> Field<T> of(String className, String name, Class<T> type) {
+        return io.github.lumine1909.reflexion.Class.forName(className).orElseThrow().getField(name, type).orElseThrow();
+    }
+
     public boolean isStatic() {
         return Modifier.isStatic(javaField.getModifiers());
     }
