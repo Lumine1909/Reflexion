@@ -1,8 +1,8 @@
 package io.github.lumine1909.reflexion.field;
 
-import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
-
 import java.lang.reflect.Field;
+
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
 
 final class FloatField extends UnsafeFieldHolder<Float> {
 

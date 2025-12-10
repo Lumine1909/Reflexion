@@ -26,6 +26,8 @@ public abstract class UnsafeFieldHolder<T> {
             return new BooleanField(field);
         } else if (type == int.class) {
             return new IntField(field);
+        } else if (type == short.class) {
+            return new ShortField(field);
         } else if (type == long.class) {
             return new LongField(field);
         } else if (type == double.class) {

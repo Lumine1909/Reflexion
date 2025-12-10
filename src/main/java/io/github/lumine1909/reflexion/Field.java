@@ -22,12 +22,24 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
         return io.github.lumine1909.reflexion.Class.forName(className).orElseThrow().getField(name, type).orElseThrow();
     }
 
+    public static <T> Field<T> of(Class<?> clazz, String name) {
+        return (Field<T>) io.github.lumine1909.reflexion.Class.of(clazz).getField(name).orElseThrow();
+    }
+
+    public static <T> Field<T> of(String className, String name) {
+        return (Field<T>) io.github.lumine1909.reflexion.Class.forName(className).orElseThrow().getField(name).orElseThrow();
+    }
+
     public boolean isStatic() {
         return Modifier.isStatic(javaField.getModifiers());
     }
 
     public T get(Object instance) {
         return holder.get(instance);
+    }
+
+    public <S> S getUnsafe(Object instance) {
+        return (S) holder.get(instance);
     }
 
     public void set(Object instance, T value) {
