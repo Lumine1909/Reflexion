@@ -35,6 +35,11 @@ public record Class<T>(java.lang.Class<T> javaClass) {
         return new Class<>(clazz);
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public <S> Optional<Field<S>> getField(String name) {
+        return getField(name, (java.lang.Class) null);
+    }
+
     public <S> Optional<Field<S>> getField(String name, Class<S> type) {
         return getField(name, type.javaClass);
     }
@@ -42,7 +47,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
     public <S> Optional<Field<S>> getField(String name, java.lang.Class<S> type) {
         try {
             java.lang.reflect.Field field = javaClass.getDeclaredField(name);
-            if (field.getType() != type) {
+            if (type != null && field.getType() != type) {
                 return Optional.empty();
             }
             return Optional.of(new Field<>(field));
