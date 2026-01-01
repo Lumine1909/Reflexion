@@ -13,10 +13,10 @@ public class FieldTest {
         Field<Integer> fi = Field.of(A.class, "i");
         Field<String> fs = Field.of(A.class, "str", String.class);
         assertEquals((byte) 42, fb.get(a));
-        assertEquals(42, fi.get(a));
+        assertEquals(42, fi.get(null));
         assertEquals("42", fs.get(a));
         fb.set(a, (byte) 41);
-        fi.set(a, 41);
+        fi.set(null, 41);
         fs.set(a, "41");
         assertEquals((byte) 41, fb.get(a));
         assertEquals(41, fi.get(a));
