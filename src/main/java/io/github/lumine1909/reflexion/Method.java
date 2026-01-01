@@ -3,7 +3,8 @@ package io.github.lumine1909.reflexion;
 import java.lang.Class;
 import java.lang.invoke.MethodHandle;
 
-public record Method<T>(java.lang.reflect.Method javaMethod, boolean isStatic, MethodHandle methodHandle) {
+public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount, boolean isStatic,
+                        MethodHandle methodHandle) {
 
     public static <T> Method<T> of(Class<?> clazz, String name, Class<T> returnType, Class<?>... parameterTypes) {
         return io.github.lumine1909.reflexion.Class.of(clazz).getMethod(name, returnType, parameterTypes).orElseThrow();
@@ -20,7 +21,7 @@ public record Method<T>(java.lang.reflect.Method javaMethod, boolean isStatic, M
     @SuppressWarnings("unchecked")
     private T invokeStatic(Object... args) {
         try {
-            return (T) switch (javaMethod.getParameterCount()) {
+            return (T) switch (parameterCount) {
                 case 0 -> methodHandle.invoke();
                 case 1 -> methodHandle.invoke(args[0]);
                 case 2 -> methodHandle.invoke(args[0], args[1]);
@@ -35,7 +36,7 @@ public record Method<T>(java.lang.reflect.Method javaMethod, boolean isStatic, M
     @SuppressWarnings("unchecked")
     private T invokeVirtual(Object instance, Object... args) {
         try {
-            return (T) switch (javaMethod.getParameterCount()) {
+            return (T) switch (parameterCount) {
                 case 0 -> methodHandle.invoke(instance);
                 case 1 -> methodHandle.invoke(instance, args[0]);
                 case 2 -> methodHandle.invoke(instance, args[0], args[1]);

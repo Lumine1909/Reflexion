@@ -1,11 +1,13 @@
 package io.github.lumine1909.reflexion;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Optional;
 
 import static io.github.lumine1909.reflexion.UnsafeUtil.IMPL_LOOKUP;
+import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
 
 public record Class<T>(java.lang.Class<T> javaClass) {
 
@@ -25,7 +27,6 @@ public record Class<T>(java.lang.Class<T> javaClass) {
             java.lang.Class<T> clazz = (java.lang.Class<T>) java.lang.Class.forName(name, initialize, loader);
             return Optional.of(new Class<>(clazz));
         } catch (Exception e) {
-            e.printStackTrace();
             return Optional.empty();
         }
     }
@@ -70,10 +71,28 @@ public record Class<T>(java.lang.Class<T> javaClass) {
             if (!returnType.isAssignableFrom(method.getReturnType())) {
                 return Optional.empty();
             }
-            return Optional.of(new Method<>(method, Modifier.isStatic(method.getModifiers()), methodHandle));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Optional.empty();
+            return Optional.of(new Method<>(method, parameterTypes.length, Modifier.isStatic(method.getModifiers()), methodHandle));
+        } catch (Exception ignored) {
+        }
+        try {
+            MethodHandle methodHandle = IMPL_LOOKUP.findVirtual(javaClass, name, MethodType.methodType(returnType, parameterTypes));
+            return Optional.of(new Method<>(null, parameterTypes.length, false, methodHandle));
+        } catch (Exception ignored) {
+        }
+        try {
+            MethodHandle methodHandle = IMPL_LOOKUP.findStatic(javaClass, name, MethodType.methodType(returnType, parameterTypes));
+            return Optional.of(new Method<>(null, parameterTypes.length, true, methodHandle));
+        } catch (Exception ignored) {
+        }
+        return Optional.empty();
+    }
+
+    @SuppressWarnings("unchecked")
+    public T newInstance() {
+        try {
+            return (T) UNSAFE.allocateInstance(javaClass);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
         }
     }
 }

@@ -17,4 +17,7 @@ public class A {
     private static int test() {
         return 42;
     }
+
+    record R(String str) {
+    }
 }
