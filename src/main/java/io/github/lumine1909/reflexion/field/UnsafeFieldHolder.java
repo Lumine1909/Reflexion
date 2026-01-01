@@ -1,9 +1,9 @@
 package io.github.lumine1909.reflexion.field;
 
+import io.github.lumine1909.reflexion.UnsafeUtil;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
 
 public abstract class UnsafeFieldHolder<T> {
 
@@ -11,11 +11,10 @@ public abstract class UnsafeFieldHolder<T> {
     protected final Object staticBase;
     protected final long staticOffset;
 
-    @SuppressWarnings("deprecation")
     public UnsafeFieldHolder(Field javaField) {
-        this.objectOffset = Modifier.isStatic(javaField.getModifiers()) ? -1 : UNSAFE.objectFieldOffset(javaField);
-        this.staticBase = Modifier.isStatic(javaField.getModifiers()) ? UNSAFE.staticFieldBase(javaField) : null;
-        this.staticOffset = Modifier.isStatic(javaField.getModifiers()) ? UNSAFE.staticFieldOffset(javaField) : -1;
+        this.objectOffset = Modifier.isStatic(javaField.getModifiers()) ? -1 : UnsafeUtil.objectFieldOffset(javaField);
+        this.staticBase = Modifier.isStatic(javaField.getModifiers()) ? UnsafeUtil.staticFieldBase(javaField) : null;
+        this.staticOffset = Modifier.isStatic(javaField.getModifiers()) ? UnsafeUtil.staticFieldOffset(javaField) : -1;
     }
 
     public static UnsafeFieldHolder<?> createHolder(java.lang.reflect.Field field) {
