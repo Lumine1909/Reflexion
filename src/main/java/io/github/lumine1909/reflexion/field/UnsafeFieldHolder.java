@@ -39,19 +39,22 @@ public abstract class UnsafeFieldHolder<T> {
     }
 
     public T get(Object obj) {
-        if (objectOffset == -1 && obj == null) {
+        if (objectOffset == -1) {
+            return getStatic();
+        }
+        if (obj == null) {
             throw new NullPointerException("Instance is null for non-static field");
         }
-        return objectOffset == -1 ? getStatic() : getInstance(obj);
+        return getInstance(obj);
     }
 
     public void set(Object obj, T value) {
         if (objectOffset == -1) {
-            if (obj == null) {
-                throw new NullPointerException("Instance is null for non-static field");
-            }
             setStatic(value);
             return;
+        }
+        if (obj == null) {
+            throw new NullPointerException("Instance is null for non-static field");
         }
         setInstance(obj, value);
     }

@@ -20,7 +20,6 @@ public class UnsafeUtil {
     private static final MethodHandle method$staticFieldBase;
     private static final MethodHandle method$staticFieldOffset;
 
-
     static {
         try {
             Field field$theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
@@ -30,8 +29,7 @@ public class UnsafeUtil {
             IMPL_LOOKUP = (MethodHandles.Lookup) UNSAFE.getObject(MethodHandles.Lookup.class, UNSAFE.staticFieldOffset(field$implLookup));
             class$InternalUnsafe = Class.forName("jdk.internal.misc.Unsafe");
             Field field$internalUnsafe = class$InternalUnsafe.getDeclaredField("theUnsafe");
-            long offset = UNSAFE.staticFieldOffset(field$internalUnsafe);
-            INTERNAL_UNSAFE = UNSAFE.getObject(UNSAFE.staticFieldBase(field$internalUnsafe), offset);
+            INTERNAL_UNSAFE = UNSAFE.getObject(UNSAFE.staticFieldBase(field$internalUnsafe), UNSAFE.staticFieldOffset(field$internalUnsafe));
             method$objectFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "objectFieldOffset", MethodType.methodType(long.class, Field.class));
             method$staticFieldBase = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldBase", MethodType.methodType(Object.class, Field.class));
             method$staticFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldOffset", MethodType.methodType(long.class, Field.class));
