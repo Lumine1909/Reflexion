@@ -2,9 +2,9 @@ package io.github.lumine1909.reflexion.field;
 
 import java.lang.reflect.Field;
 
-import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 
-public class ShortField extends UnsafeFieldHolder<Short> {
+class ShortField extends UnsafeFieldHolder<Short> {
 
     public ShortField(Field javaField) {
         super(javaField);

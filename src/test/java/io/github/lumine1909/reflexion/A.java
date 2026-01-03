@@ -18,6 +18,13 @@ public class A {
         return 42;
     }
 
+    public void test(int arg1, int arg2, int arg3, Object arg4) {
+    }
+
+    public static void testStatic(int arg1, int arg2, int arg3, Object arg4) {
+    }
+
     record R(String str) {
+
     }
 }
