@@ -36,7 +36,7 @@ mavenPublishing {
     )
     pom {
         name.set("reflexion")
-        description.set("A fast implementation library for Java reflection.")
+        description.set("A \"fast\" and \"powerful\" implementation library for Java reflection.")
         url.set("https://github.com/Lumine1909/Reflexion")
         licenses {
             license {
