@@ -1,13 +1,15 @@
 package io.github.lumine1909.reflexion;
 
+import io.github.lumine1909.reflexion.internal.MethodHolder;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static io.github.lumine1909.reflexion.UnsafeUtil.IMPL_LOOKUP;
-import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+import static io.github.lumine1909.reflexion.internal.UnsafeUtil.IMPL_LOOKUP;
+import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 
 public record Class<T>(java.lang.Class<T> javaClass) {
 
@@ -71,17 +73,17 @@ public record Class<T>(java.lang.Class<T> javaClass) {
             if (!returnType.isAssignableFrom(method.getReturnType())) {
                 return Optional.empty();
             }
-            return Optional.of(new Method<>(method, parameterTypes.length, Modifier.isStatic(method.getModifiers()), methodHandle));
+            return Optional.of(new Method<>(method, parameterTypes.length, Modifier.isStatic(method.getModifiers()), methodHandle, MethodHolder.createSupplier(method)));
         } catch (Exception ignored) {
         }
         try {
             MethodHandle methodHandle = IMPL_LOOKUP.findVirtual(javaClass, name, MethodType.methodType(returnType, parameterTypes));
-            return Optional.of(new Method<>(null, parameterTypes.length, false, methodHandle));
+            return Optional.of(new Method<>(null, parameterTypes.length, false, methodHandle, null));
         } catch (Exception ignored) {
         }
         try {
             MethodHandle methodHandle = IMPL_LOOKUP.findStatic(javaClass, name, MethodType.methodType(returnType, parameterTypes));
-            return Optional.of(new Method<>(null, parameterTypes.length, true, methodHandle));
+            return Optional.of(new Method<>(null, parameterTypes.length, true, methodHandle, null));
         } catch (Exception ignored) {
         }
         return Optional.empty();

@@ -2,7 +2,7 @@ package io.github.lumine1909.reflexion.field;
 
 import java.lang.reflect.Field;
 
-import static io.github.lumine1909.reflexion.UnsafeUtil.UNSAFE;
+import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 
 @SuppressWarnings("unchecked")
 final class ObjectField<T> extends UnsafeFieldHolder<T> {

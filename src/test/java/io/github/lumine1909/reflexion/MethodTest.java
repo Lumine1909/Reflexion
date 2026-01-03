@@ -15,7 +15,9 @@ public class MethodTest {
         Method<Void> setStr = Method.of(A.class, "setStr", void.class, String.class);
         assertEquals(42, test.invoke(null));
         assertEquals("42", getStr.invoke(a));
+        assertEquals("42", getStr.invokeFast(a));
         setStr.invoke(a, "43");
+        setStr.invokeFast(a, "43");
         assertEquals("43", getStr.invoke(a));
     }
 }

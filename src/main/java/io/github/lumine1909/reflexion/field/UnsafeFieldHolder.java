@@ -1,6 +1,6 @@
 package io.github.lumine1909.reflexion.field;
 
-import io.github.lumine1909.reflexion.UnsafeUtil;
+import io.github.lumine1909.reflexion.internal.UnsafeUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
