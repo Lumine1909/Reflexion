@@ -5,7 +5,7 @@ import java.lang.invoke.MethodHandle;
 import java.util.function.Supplier;
 
 public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount, boolean isStatic,
-                        MethodHandle methodHandle, Supplier<java.lang.reflect.Method> supplier) {
+                        MethodHandle methodHandle, MethodHandle spreader, Supplier<java.lang.reflect.Method> supplier) {
 
     public static <T> Method<T> of(Class<?> clazz, String name, Class<T> returnType, Class<?>... parameterTypes) {
         return io.github.lumine1909.reflexion.Class.of(clazz).getMethod(name, returnType, parameterTypes).orElseThrow();
@@ -36,7 +36,9 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
                 case 1 -> methodHandle.invoke(args[0]);
                 case 2 -> methodHandle.invoke(args[0], args[1]);
                 case 3 -> methodHandle.invoke(args[0], args[1], args[2]);
-                default -> methodHandle.invoke(args);
+                case 4 -> methodHandle.invoke(args[0], args[1], args[2], args[3]);
+                case 5 -> methodHandle.invoke(args[0], args[1], args[2], args[3], args[4]);
+                default -> spreader.invoke(args);
             };
         } catch (Throwable t) {
             throw new RuntimeException(t);
@@ -51,7 +53,9 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
                 case 1 -> methodHandle.invoke(instance, args[0]);
                 case 2 -> methodHandle.invoke(instance, args[0], args[1]);
                 case 3 -> methodHandle.invoke(instance, args[0], args[1], args[2]);
-                default -> methodHandle.invoke(instance, args);
+                case 4 -> methodHandle.invoke(instance, args[0], args[1], args[2], args[3]);
+                case 5 -> methodHandle.invoke(instance, args[0], args[1], args[2], args[3], args[4]);
+                default -> spreader.invoke(instance, args);
             };
         } catch (Throwable t) {
             throw new RuntimeException(t);

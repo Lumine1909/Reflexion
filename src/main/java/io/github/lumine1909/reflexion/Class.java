@@ -11,24 +11,31 @@ import java.util.Optional;
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.IMPL_LOOKUP;
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 
+@SuppressWarnings("unchecked")
 public record Class<T>(java.lang.Class<T> javaClass) {
 
-    @SuppressWarnings("unchecked")
     public static <T> Optional<Class<T>> forName(String name) {
         try {
             java.lang.Class<T> clazz = (java.lang.Class<T>) java.lang.Class.forName(name);
             return Optional.of(new Class<>(clazz));
-        } catch (Exception e) {
+        } catch (Throwable t) {
             return Optional.empty();
         }
     }
 
-    @SuppressWarnings("unchecked")
+    public static <T> Class<T> forNameNullable(String name) {
+        try {
+            return new Class<>((java.lang.Class<T>) java.lang.Class.forName(name));
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
     public static <T> Optional<Class<T>> forName(String name, boolean initialize, ClassLoader loader) {
         try {
             java.lang.Class<T> clazz = (java.lang.Class<T>) java.lang.Class.forName(name, initialize, loader);
             return Optional.of(new Class<>(clazz));
-        } catch (Exception e) {
+        } catch (Throwable t) {
             return Optional.empty();
         }
     }
@@ -37,7 +44,13 @@ public record Class<T>(java.lang.Class<T> javaClass) {
         return new Class<>(clazz);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static MethodHandle createSpreader(MethodHandle methodHandle, boolean isStatic) {
+        return isStatic ?
+            methodHandle.asSpreader(Object[].class, methodHandle.type().parameterCount()) :
+            methodHandle.asSpreader(Object[].class, methodHandle.type().parameterCount() - 1);
+    }
+
+    @SuppressWarnings("rawtypes")
     public <S> Optional<Field<S>> getField(String name) {
         return getField(name, (java.lang.Class) null);
     }
@@ -53,7 +66,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
                 return Optional.empty();
             }
             return Optional.of(new Field<>(field));
-        } catch (Exception e) {
+        } catch (Throwable t) {
             return Optional.empty();
         }
     }
@@ -73,23 +86,22 @@ public record Class<T>(java.lang.Class<T> javaClass) {
             if (!returnType.isAssignableFrom(method.getReturnType())) {
                 return Optional.empty();
             }
-            return Optional.of(new Method<>(method, parameterTypes.length, Modifier.isStatic(method.getModifiers()), methodHandle, MethodHolder.createSupplier(method)));
-        } catch (Exception ignored) {
+            return Optional.of(new Method<>(method, parameterTypes.length, Modifier.isStatic(method.getModifiers()), methodHandle, createSpreader(methodHandle, Modifier.isStatic(method.getModifiers())), MethodHolder.createSupplier(method)));
+        } catch (Throwable ignored) {
         }
         try {
             MethodHandle methodHandle = IMPL_LOOKUP.findVirtual(javaClass, name, MethodType.methodType(returnType, parameterTypes));
-            return Optional.of(new Method<>(null, parameterTypes.length, false, methodHandle, null));
-        } catch (Exception ignored) {
+            return Optional.of(new Method<>(null, parameterTypes.length, false, methodHandle, createSpreader(methodHandle, false), null));
+        } catch (Throwable ignored) {
         }
         try {
             MethodHandle methodHandle = IMPL_LOOKUP.findStatic(javaClass, name, MethodType.methodType(returnType, parameterTypes));
-            return Optional.of(new Method<>(null, parameterTypes.length, true, methodHandle, null));
-        } catch (Exception ignored) {
+            return Optional.of(new Method<>(null, parameterTypes.length, true, methodHandle, createSpreader(methodHandle, true), null));
+        } catch (Throwable ignored) {
         }
         return Optional.empty();
     }
 
-    @SuppressWarnings("unchecked")
     public T newInstance() {
         try {
             return (T) UNSAFE.allocateInstance(javaClass);
