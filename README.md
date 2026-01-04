@@ -90,7 +90,7 @@ public class Benchmark {
 
             final$method$call = method$call;
             mh$call = IMPL_LOOKUP.unreflect(method$call);
-            final$mh$call = mh$call.asType(mh$call.type().generic());
+            final$mh$call = mh$call;
 
             field$value = A.class.getDeclaredField("value");
             field$value.setAccessible(true);
