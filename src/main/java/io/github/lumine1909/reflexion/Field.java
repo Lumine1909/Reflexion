@@ -1,9 +1,10 @@
 package io.github.lumine1909.reflexion;
 
 import io.github.lumine1909.reflexion.field.UnsafeFieldHolder;
-import io.github.lumine1909.reflexion.internal.FieldHolder;
+import io.github.lumine1909.reflexion.internal.VarHolder;
 
 import java.lang.Class;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Modifier;
 import java.util.function.Supplier;
 
@@ -11,10 +12,10 @@ import static io.github.lumine1909.reflexion.field.UnsafeFieldHolder.createHolde
 
 @SuppressWarnings("unchecked")
 public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> holder,
-                       Supplier<java.lang.reflect.Field> supplier) {
+                       boolean isStatic, Supplier<VarHandle> supplier) {
 
     public Field(java.lang.reflect.Field javaField) {
-        this(javaField, (UnsafeFieldHolder<T>) createHolder(javaField), FieldHolder.createSupplier(javaField));
+        this(javaField, (UnsafeFieldHolder<T>) createHolder(javaField), Modifier.isStatic(javaField.getModifiers()), VarHolder.createSupplier(javaField));
     }
 
     public static <T> Field<T> of(Class<?> clazz, String name, Class<T> type) {
@@ -43,7 +44,11 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
 
     public T getFast(Object instance) {
         try {
-            return supplier != null ? (T) supplier.get().get(instance) : get(instance);
+            if (supplier != null) {
+                return instance == null ? (T) supplier.get().get() : (T) supplier.get().get(instance);
+            } else {
+                return get(instance);
+            }
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -55,7 +60,11 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
 
     public <S> S getUnsafeFast(Object instance) {
         try {
-            return supplier != null ? (S) supplier.get().get(instance) : getUnsafe(instance);
+            if (supplier != null) {
+                return instance == null ? (S) supplier.get().get() : (S) supplier.get().get(instance);
+            } else {
+                return getUnsafe(instance);
+            }
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -66,18 +75,18 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
     }
 
     public void setFast(Object instance, T value) {
-        holder.set(instance, value);
-        /* From the benchmark, this is slower than unsafe set
         try {
             if (supplier != null) {
-                supplier.get().set(instance, value);
+                if (instance == null) {
+                    supplier.get().set(value);
+                } else {
+                    supplier.get().set(instance, value);
+                }
             } else {
                 set(instance, value);
             }
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
-
-         */
     }
 }
