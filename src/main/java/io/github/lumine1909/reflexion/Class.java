@@ -83,19 +83,22 @@ public record Class<T>(java.lang.Class<T> javaClass) {
         try {
             java.lang.reflect.Method method = javaClass.getDeclaredMethod(name, parameterTypes);
             MethodHandle methodHandle = IMPL_LOOKUP.unreflect(method);
+            methodHandle = methodHandle.asType(methodHandle.type().generic());
             if (!returnType.isAssignableFrom(method.getReturnType())) {
                 return Optional.empty();
             }
-            return Optional.of(new Method<>(method, parameterTypes.length, Modifier.isStatic(method.getModifiers()), methodHandle, createSpreader(methodHandle, Modifier.isStatic(method.getModifiers())), MethodHolder.createSupplier(method)));
+            return Optional.of(new Method<>(method, parameterTypes.length, Modifier.isStatic(method.getModifiers()), methodHandle, createSpreader(methodHandle, Modifier.isStatic(method.getModifiers())), MethodHolder.createSupplier(methodHandle)));
         } catch (Throwable ignored) {
         }
         try {
             MethodHandle methodHandle = IMPL_LOOKUP.findVirtual(javaClass, name, MethodType.methodType(returnType, parameterTypes));
+            methodHandle = methodHandle.asType(methodHandle.type().generic());
             return Optional.of(new Method<>(null, parameterTypes.length, false, methodHandle, createSpreader(methodHandle, false), null));
         } catch (Throwable ignored) {
         }
         try {
             MethodHandle methodHandle = IMPL_LOOKUP.findStatic(javaClass, name, MethodType.methodType(returnType, parameterTypes));
+            methodHandle = methodHandle.asType(methodHandle.type().generic());
             return Optional.of(new Method<>(null, parameterTypes.length, true, methodHandle, createSpreader(methodHandle, true), null));
         } catch (Throwable ignored) {
         }

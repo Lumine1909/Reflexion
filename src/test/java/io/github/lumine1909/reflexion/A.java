@@ -2,9 +2,16 @@ package io.github.lumine1909.reflexion;
 
 public class A {
 
-    private final byte b = 42;
     private static final int i = 42;
+    private final byte b = 42;
     private String str = "42";
+
+    private static int test() {
+        return 42;
+    }
+
+    public static void testStatic(int arg1, int arg2, int arg3, int arg4, int arg5, Object arg6) {
+    }
 
     private String getStr() {
         return str;
@@ -14,14 +21,7 @@ public class A {
         this.str = str;
     }
 
-    private static int test() {
-        return 42;
-    }
-
-    public void test(int arg1, int arg2, int arg3, Object arg4) {
-    }
-
-    public static void testStatic(int arg1, int arg2, int arg3, Object arg4) {
+    public void test(int arg1, int arg2, int arg3, int arg4, int arg5, Object arg6) {
     }
 
     record R(String str) {

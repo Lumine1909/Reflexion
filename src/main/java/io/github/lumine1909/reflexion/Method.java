@@ -5,7 +5,7 @@ import java.lang.invoke.MethodHandle;
 import java.util.function.Supplier;
 
 public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount, boolean isStatic,
-                        MethodHandle methodHandle, MethodHandle spreader, Supplier<java.lang.reflect.Method> supplier) {
+                        MethodHandle methodHandle, MethodHandle spreader, Supplier<MethodHandle> supplier) {
 
     public static <T> Method<T> of(Class<?> clazz, String name, Class<T> returnType, Class<?>... parameterTypes) {
         return io.github.lumine1909.reflexion.Class.of(clazz).getMethod(name, returnType, parameterTypes).orElseThrow();
@@ -16,49 +16,40 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
     }
 
     public T invoke(Object instance, Object... args) {
-        return isStatic ? invokeStatic(args) : invokeVirtual(instance, args);
-    }
-
-    @SuppressWarnings("unchecked")
-    public T invokeFast(Object instance, Object... args) {
         try {
-            return supplier != null ? (T) supplier.get().invoke(instance, args) : invoke(instance, args);
+            if (supplier == null) {
+                return isStatic ? invokeStatic(methodHandle, instance, args) : invokeVirtual(methodHandle, instance, args);
+            } else {
+                return isStatic ? invokeStatic(supplier.get(), instance, args) : invokeVirtual(supplier.get(), instance, args);
+            }
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private T invokeStatic(Object... args) {
-        try {
-            return (T) switch (parameterCount) {
-                case 0 -> methodHandle.invoke();
-                case 1 -> methodHandle.invoke(args[0]);
-                case 2 -> methodHandle.invoke(args[0], args[1]);
-                case 3 -> methodHandle.invoke(args[0], args[1], args[2]);
-                case 4 -> methodHandle.invoke(args[0], args[1], args[2], args[3]);
-                case 5 -> methodHandle.invoke(args[0], args[1], args[2], args[3], args[4]);
-                default -> spreader.invoke(args);
-            };
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+    private T invokeStatic(MethodHandle methodHandle, Object instance, Object... args) throws Throwable {
+        return (T) switch (parameterCount) {
+            case 0 -> methodHandle.invokeExact();
+            case 1 -> methodHandle.invokeExact(args[0]);
+            case 2 -> methodHandle.invokeExact(args[0], args[1]);
+            case 3 -> methodHandle.invokeExact(args[0], args[1], args[2]);
+            case 4 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3]);
+            case 5 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3], args[4]);
+            default -> spreader.invokeExact(args);
+        };
     }
 
     @SuppressWarnings("unchecked")
-    private T invokeVirtual(Object instance, Object... args) {
-        try {
-            return (T) switch (parameterCount) {
-                case 0 -> methodHandle.invoke(instance);
-                case 1 -> methodHandle.invoke(instance, args[0]);
-                case 2 -> methodHandle.invoke(instance, args[0], args[1]);
-                case 3 -> methodHandle.invoke(instance, args[0], args[1], args[2]);
-                case 4 -> methodHandle.invoke(instance, args[0], args[1], args[2], args[3]);
-                case 5 -> methodHandle.invoke(instance, args[0], args[1], args[2], args[3], args[4]);
-                default -> spreader.invoke(instance, args);
-            };
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+    private T invokeVirtual(MethodHandle methodHandle, Object instance, Object... args) throws Throwable {
+        return (T) switch (parameterCount) {
+            case 0 -> methodHandle.invokeExact(instance);
+            case 1 -> methodHandle.invokeExact(instance, args[0]);
+            case 2 -> methodHandle.invokeExact(instance, args[0], args[1]);
+            case 3 -> methodHandle.invokeExact(instance, args[0], args[1], args[2]);
+            case 4 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3]);
+            case 5 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4]);
+            default -> spreader.invokeExact(instance, args);
+        };
     }
 }

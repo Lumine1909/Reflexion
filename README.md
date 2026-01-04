@@ -2,52 +2,49 @@
 
 A "fast" and "powerful" implementation library for Java reflection.
 
-| Benchmark           | Mode | Cnt | Score | Error  | Units |
-|---------------------|------|-----|-------|--------|-------|
-| directAccess        | avgt | 20  | 0.736 | ±0.045 | ns/op |
-| directMutate        | avgt | 20  | 1.228 | ±0.073 | ns/op |
-| directCall          | avgt | 20  | 1.461 | ±0.050 | ns/op |
-|                     |      |     |       |        |       |
-| customAccess        | avgt | 20  | 1.448 | ±0.080 | ns/op |
-| customAccessFast    | avgt | 20  | 1.091 | ±0.038 | ns/op |
-| customAccessSF      | avgt | 20  | 0.923 | ±0.028 | ns/op |
-| customAccessFastSF  | avgt | 20  | 0.733 | ±0.023 | ns/op |
-|                     |      |     |       |        |       |
-| customMutate        | avgt | 20  | 1.942 | ±0.031 | ns/op |
-| customMutateFast    | avgt | 20  | 1.948 | ±0.074 | ns/op |
-| customMutateSF      | avgt | 20  | 1.478 | ±0.075 | ns/op |
-| customMutateFastSF* | avgt | 20  | 1.706 | ±0.057 | ns/op |
-|                     |      |     |       |        |       |
-| customCall          | avgt | 20  | 6.087 | ±0.113 | ns/op |
-| customCallFast      | avgt | 20  | 2.587 | ±0.087 | ns/op |
-| customCallSF        | avgt | 20  | 5.514 | ±0.115 | ns/op |
-| customCallFastSF    | avgt | 20  | 1.901 | ±0.050 | ns/op |
-|                     |      |     |       |        |       |
-| vhAccess            | avgt | 20  | 5.818 | ±0.284 | ns/op |
-| vhAccessSF          | avgt | 20  | 0.743 | ±0.023 | ns/op |
-| vhMutate            | avgt | 20  | 6.760 | ±0.464 | ns/op |
-| vhMutateSF          | avgt | 20  | 1.117 | ±0.041 | ns/op |
-| mhCall              | avgt | 20  | 5.087 | ±0.164 | ns/op |
-| mhCallSF            | avgt | 20  | 1.535 | ±0.105 | ns/op |
-|                     |      |     |       |        |       |
-| reflectAccess       | avgt | 20  | 5.956 | ±0.273 | ns/op |
-| reflectAccessSF     | avgt | 20  | 0.734 | ±0.017 | ns/op |
-| reflectMutate       | avgt | 20  | 7.365 | ±0.468 | ns/op |
-| reflectMutateSF     | avgt | 20  | 1.702 | ±0.144 | ns/op |
-| reflectCall         | avgt | 20  | 7.681 | ±0.539 | ns/op |
-| reflectCallSF       | avgt | 20  | 1.924 | ±0.042 | ns/op |
+Performance: almost same as `MethodHandle`/`VarHandle` with `static final` modifier, much faster than them without it.
+
+| Benchmark          | Mode | Cnt | Score | Error  | Units |
+|--------------------|------|-----|-------|--------|-------|
+| directAccess       | avgt | 20  | 0.705 | ±0.043 | ns/op |
+| directMutate       | avgt | 20  | 1.118 | ±0.061 | ns/op |
+| directCall         | avgt | 20  | 1.411 | ±0.030 | ns/op |
+|                    |      |     |       |        |       |
+| customAccess       | avgt | 20  | 1.401 | ±0.030 | ns/op |
+| customAccessFast   | avgt | 20  | 0.918 | ±0.035 | ns/op |
+| customAccessSF     | avgt | 20  | 0.891 | ±0.048 | ns/op |
+| customAccessFastSF | avgt | 20  | 0.686 | ±0.019 | ns/op |
+|                    |      |     |       |        |       |
+| customMutate       | avgt | 20  | 1.838 | ±0.047 | ns/op |
+| customMutateFast   | avgt | 20  | 1.622 | ±0.078 | ns/op |
+| customMutateSF     | avgt | 20  | 1.439 | ±0.058 | ns/op |
+| customMutateFastSF | avgt | 20  | 1.038 | ±0.034 | ns/op |
+|                    |      |     |       |        |       |
+| customCall         | avgt | 20  | 2.311 | ±0.051 | ns/op |
+| customCallSF       | avgt | 20  | 1.386 | ±0.037 | ns/op |
+|                    |      |     |       |        |       |
+| vhAccess           | avgt | 20  | 5.818 | ±0.284 | ns/op |
+| vhAccessSF         | avgt | 20  | 0.715 | ±0.042 | ns/op |
+| vhMutate           | avgt | 20  | 6.760 | ±0.464 | ns/op |
+| vhMutateSF         | avgt | 20  | 1.117 | ±0.041 | ns/op |
+| mhCall             | avgt | 20  | 5.087 | ±0.164 | ns/op |
+| mhCallSF           | avgt | 20  | 1.535 | ±0.105 | ns/op |
+|                    |      |     |       |        |       |
+| reflectAccess      | avgt | 20  | 5.956 | ±0.273 | ns/op |
+| reflectAccessSF    | avgt | 20  | 0.734 | ±0.017 | ns/op |
+| reflectMutate      | avgt | 20  | 7.365 | ±0.468 | ns/op |
+| reflectMutateSF    | avgt | 20  | 1.702 | ±0.144 | ns/op |
+| reflectCall        | avgt | 20  | 7.681 | ±0.539 | ns/op |
+| reflectCallSF      | avgt | 20  | 1.924 | ±0.042 | ns/op |
 
 `SF`: static final modifier.
-
-`*`: Due to not actually "fast", the implement is changed to the same as "customMutate".
 
 ------
 <details>
   <summary>Benchmark code</summary>
 
 ```java
-// Benchmark.java
-package com.example;
+// Benchmark.javapackage com.example;
 
 import org.openjdk.jmh.annotations.*;
 
@@ -86,12 +83,14 @@ public class Benchmark {
 
     static {
         try {
-            method$call = A.class.getDeclaredMethod("call", int.class);
-            method$call.setAccessible(true);
+            final Method m = A.class.getDeclaredMethod("call", int.class);
+            m.setAccessible(true);
+
+            method$call = m;
 
             final$method$call = method$call;
             mh$call = IMPL_LOOKUP.unreflect(method$call);
-            final$mh$call = mh$call;
+            final$mh$call = mh$call.asType(mh$call.type().generic());
 
             field$value = A.class.getDeclaredField("value");
             field$value.setAccessible(true);
@@ -191,8 +190,8 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public String customCallFast() {
-        return custom$call.invokeFast(object, 42);
+    public String customCallSF() {
+        return final$custom$call.invoke(object, 42);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
@@ -223,17 +222,6 @@ public class Benchmark {
     @org.openjdk.jmh.annotations.Benchmark
     public void customMutateFast() {
         custom$value.setFast(object, "42");
-    }
-
-
-    @org.openjdk.jmh.annotations.Benchmark
-    public String customCallSF() {
-        return final$custom$call.invoke(object, 42);
-    }
-
-    @org.openjdk.jmh.annotations.Benchmark
-    public String customCallFastSF() {
-        return final$custom$call.invokeFast(object, 42);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
