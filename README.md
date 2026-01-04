@@ -39,7 +39,7 @@ A "fast" and "powerful" implementation library for Java reflection.
 
 `SF`: static final modifier.
 
-`*`: Due to not actually "fast", the implement is change to the same as "customMutate".
+`*`: Due to not actually "fast", the implement is changed to the same as "customMutate".
 
 ------
 <details>
