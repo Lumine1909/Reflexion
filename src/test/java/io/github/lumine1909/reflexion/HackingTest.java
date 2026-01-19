@@ -1,8 +1,11 @@
 package io.github.lumine1909.reflexion;
 
+import io.github.lumine1909.reflexion.internal.UnsafeUtil;
 import org.junit.jupiter.api.Test;
+import sun.misc.Unsafe;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.INTERNAL_UNSAFE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,5 +37,13 @@ public class HackingTest {
         Method<Object> method$staticFieldBase = Method.of(class$InternalUnsafe.javaClass(), "staticFieldBase", Object.class, java.lang.reflect.Field.class);
         Object base = method$staticFieldBase.invoke(INTERNAL_UNSAFE, Field.of(A.class, "i").javaField());
         assertEquals(A.class, base);
+    }
+
+    @Test
+    public void testFilteredField() {
+        UnsafeUtil.clearReflectionFilter();
+        Class<?> class$Reflection = Class.forName("jdk.internal.reflect.Reflection");
+        Field<Map> f = class$Reflection.getField("fieldFilterMap");
+        assertEquals(0, f.get(null).size());
     }
 }

@@ -75,12 +75,12 @@ public record Class<T>(java.lang.Class<T> javaClass) {
         try {
             java.lang.reflect.Field field = javaClass.getDeclaredField(name);
             if (type != null && field.getType() != type) {
-                throw new NotFoundException("Can not find field \"" + name + "\" with type " + type);
+                throw new NotFoundException("Can not find field \"" + name + "\" in " + javaClass + " with type " + type);
             }
             VarHandle varHandle = IMPL_LOOKUP.unreflectVarHandle(field);
             return new Field<>(field, varHandle);
         } catch (NoSuchFieldException e) {
-            throw new NotFoundException("Can not find field \"" + name + "\" with type " + type);
+            throw new NotFoundException("Can not find field \"" + name + "\" in " + javaClass + " with type " + type);
 
         } catch (Throwable t) {
             throw new OperationException(t);
@@ -113,7 +113,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
             MethodHandle methodHandle = IMPL_LOOKUP.unreflect(method);
             methodHandle = methodHandle.asType(methodHandle.type().generic());
             if (!returnType.isAssignableFrom(method.getReturnType())) {
-                throw new NotFoundException("Can not find method \"" + name + "\" with return type " + returnType + ", and parameter types " + Arrays.toString(parameterTypes));
+                throw new NotFoundException("Can not find method \"" + name + "\" in " + javaClass + " with return type " + returnType + " and parameter types " + Arrays.toString(parameterTypes));
             }
             return new Method<>(method, parameterTypes.length, Modifier.isStatic(method.getModifiers()), methodHandle, createSpreader(methodHandle, Modifier.isStatic(method.getModifiers())), MethodHolder.createSupplier(methodHandle));
         } catch (Throwable ignored) {
@@ -130,7 +130,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
             return new Method<>(null, parameterTypes.length, true, methodHandle, createSpreader(methodHandle, true), MethodHolder.createSupplier(methodHandle));
         } catch (Throwable ignored) {
         }
-        throw new NotFoundException("Can not find method \"" + name + "\" with return type " + returnType + ", and parameter types " + Arrays.toString(parameterTypes));
+        throw new NotFoundException("Can not find method \"" + name + "\" in " + javaClass + " with return type " + returnType + " and parameter types " + Arrays.toString(parameterTypes));
     }
 
     public T newInstance() {
