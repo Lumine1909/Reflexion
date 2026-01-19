@@ -1,5 +1,6 @@
 package io.github.lumine1909.reflexion;
 
+import io.github.lumine1909.reflexion.exception.OperationException;
 import io.github.lumine1909.reflexion.field.UnsafeFieldHolder;
 import io.github.lumine1909.reflexion.internal.VarHolder;
 
@@ -14,24 +15,24 @@ import static io.github.lumine1909.reflexion.field.UnsafeFieldHolder.createHolde
 public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> holder,
                        boolean isStatic, Supplier<VarHandle> supplier) {
 
-    public Field(java.lang.reflect.Field javaField) {
-        this(javaField, (UnsafeFieldHolder<T>) createHolder(javaField), Modifier.isStatic(javaField.getModifiers()), VarHolder.createSupplier(javaField));
+    public Field(java.lang.reflect.Field javaField, VarHandle varHandle) {
+        this(javaField, (UnsafeFieldHolder<T>) createHolder(javaField), Modifier.isStatic(javaField.getModifiers()), VarHolder.createSupplier(varHandle));
     }
 
     public static <T> Field<T> of(Class<?> clazz, String name, Class<T> type) {
-        return io.github.lumine1909.reflexion.Class.of(clazz).getField(name, type).orElseThrow();
+        return io.github.lumine1909.reflexion.Class.of(clazz).getField(name, type);
     }
 
     public static <T> Field<T> of(String className, String name, Class<T> type) {
-        return io.github.lumine1909.reflexion.Class.forName(className).orElseThrow().getField(name, type).orElseThrow();
+        return io.github.lumine1909.reflexion.Class.forName(className).getField(name, type);
     }
 
     public static <T> Field<T> of(Class<?> clazz, String name) {
-        return (Field<T>) io.github.lumine1909.reflexion.Class.of(clazz).getField(name).orElseThrow();
+        return io.github.lumine1909.reflexion.Class.of(clazz).getField(name);
     }
 
     public static <T> Field<T> of(String className, String name) {
-        return (Field<T>) io.github.lumine1909.reflexion.Class.forName(className).orElseThrow().getField(name).orElseThrow();
+        return io.github.lumine1909.reflexion.Class.forName(className).getField(name);
     }
 
     public boolean isStatic() {
@@ -50,23 +51,23 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
                 return get(instance);
             }
         } catch (Throwable t) {
-            throw new RuntimeException(t);
+            throw new OperationException(t);
         }
     }
 
-    public <S> S getUnsafe(Object instance) {
+    public <S> S getUntyped(Object instance) {
         return (S) holder.get(instance);
     }
 
-    public <S> S getUnsafeFast(Object instance) {
+    public <S> S getUntypedFast(Object instance) {
         try {
             if (supplier != null) {
                 return instance == null ? (S) supplier.get().get() : (S) supplier.get().get(instance);
             } else {
-                return getUnsafe(instance);
+                return getUntyped(instance);
             }
         } catch (Throwable t) {
-            throw new RuntimeException(t);
+            throw new OperationException(t);
         }
     }
 
@@ -86,7 +87,7 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
                 set(instance, value);
             }
         } catch (Throwable t) {
-            throw new RuntimeException(t);
+            throw new OperationException(t);
         }
     }
 }

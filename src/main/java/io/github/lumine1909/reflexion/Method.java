@@ -1,5 +1,7 @@
 package io.github.lumine1909.reflexion;
 
+import io.github.lumine1909.reflexion.exception.OperationException;
+
 import java.lang.Class;
 import java.lang.invoke.MethodHandle;
 import java.util.function.Supplier;
@@ -8,11 +10,11 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
                         MethodHandle methodHandle, MethodHandle spreader, Supplier<MethodHandle> supplier) {
 
     public static <T> Method<T> of(Class<?> clazz, String name, Class<T> returnType, Class<?>... parameterTypes) {
-        return io.github.lumine1909.reflexion.Class.of(clazz).getMethod(name, returnType, parameterTypes).orElseThrow();
+        return io.github.lumine1909.reflexion.Class.of(clazz).getMethod(name, returnType, parameterTypes);
     }
 
     public static <T> Method<T> of(String className, String name, Class<T> returnType, Class<?>... parameterTypes) {
-        return io.github.lumine1909.reflexion.Class.forName(className).orElseThrow().getMethod(name, returnType, parameterTypes).orElseThrow();
+        return io.github.lumine1909.reflexion.Class.forName(className).getMethod(name, returnType, parameterTypes);
     }
 
     public T invoke(Object instance, Object... args) {
@@ -23,7 +25,7 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
                 return isStatic ? invokeStatic(supplier.get(), instance, args) : invokeVirtual(supplier.get(), instance, args);
             }
         } catch (Throwable t) {
-            throw new RuntimeException(t);
+            throw new OperationException(t);
         }
     }
 

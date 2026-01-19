@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HackingTest {
 
+
     @Test
     public void testHackRecord() {
         Field<String> field$str = Field.of(A.R.class, "str");
@@ -29,7 +30,7 @@ public class HackingTest {
 
     @Test
     public void testInternalUnsafe() {
-        Class<?> class$InternalUnsafe = Class.forNameNullable("jdk.internal.misc.Unsafe");
+        Class<?> class$InternalUnsafe = Class.forName("jdk.internal.misc.Unsafe");
         Method<Object> method$staticFieldBase = Method.of(class$InternalUnsafe.javaClass(), "staticFieldBase", Object.class, java.lang.reflect.Field.class);
         Object base = method$staticFieldBase.invoke(INTERNAL_UNSAFE, Field.of(A.class, "i").javaField());
         assertEquals(A.class, base);

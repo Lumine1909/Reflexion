@@ -4,7 +4,7 @@ import java.lang.invoke.MethodHandle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-public class MethodHolder {
+public final class MethodHolder {
 
     // Placeholders to exploit java inline
     private static final AtomicInteger COUNTER = new AtomicInteger();
@@ -75,7 +75,7 @@ public class MethodHolder {
     public static Supplier<MethodHandle> createSupplier(MethodHandle MethodHandle) {
         int index = COUNTER.getAndIncrement();
         try {
-            UnsafeUtil.putValue(MethodHolder.class.getDeclaredField("o" + index), MethodHandle);
+            UnsafeUtil.putObject(MethodHolder.class.getDeclaredField("o" + index), MethodHandle);
             return SUPPLIERS[index];
         } catch (Throwable t) {
             return null;
