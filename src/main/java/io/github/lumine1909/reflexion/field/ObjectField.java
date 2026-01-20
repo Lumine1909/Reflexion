@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "DataFlowIssue"})
 final class ObjectField<T> extends UnsafeFieldHolder<T> {
 
     public ObjectField(Field javaField) {

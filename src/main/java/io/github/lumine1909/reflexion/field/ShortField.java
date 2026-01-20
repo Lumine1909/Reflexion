@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 
+@SuppressWarnings("DataFlowIssue")
 class ShortField extends UnsafeFieldHolder<Short> {
 
     public ShortField(Field javaField) {

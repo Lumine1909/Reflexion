@@ -10,7 +10,7 @@ public class MethodTest {
     public void testMethod() {
         A a = new A();
         io.github.lumine1909.reflexion.Class<?> clazz = Class.of(A.class);
-        Method<Integer> test = clazz.getMethod("test", int.class).orElseThrow();
+        Method<Integer> test = clazz.getMethod("test", int.class);
         Method<String> getStr = Method.of(A.class, "getStr", String.class);
         Method<Void> setStr = Method.of(A.class, "setStr", void.class, String.class);
         Method<Void> longTest = Method.of(A.class, "test", void.class, int.class, int.class, int.class, int.class, int.class, Object.class);

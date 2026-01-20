@@ -17,7 +17,7 @@ public abstract class UnsafeFieldHolder<T> {
         this.staticOffset = Modifier.isStatic(javaField.getModifiers()) ? UnsafeUtil.staticFieldOffset(javaField) : -1;
     }
 
-    public static UnsafeFieldHolder<?> createHolder(java.lang.reflect.Field field) {
+    public static UnsafeFieldHolder<?> createHolder(Field field) {
         Class<?> type = field.getType();
         if (type == byte.class) {
             return new ByteField(field);

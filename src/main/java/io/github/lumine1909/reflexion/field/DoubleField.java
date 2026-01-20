@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 
+@SuppressWarnings("DataFlowIssue")
 final class DoubleField extends UnsafeFieldHolder<Double> {
 
     public DoubleField(Field javaField) {
