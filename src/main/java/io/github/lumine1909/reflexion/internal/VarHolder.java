@@ -1,8 +1,11 @@
 package io.github.lumine1909.reflexion.internal;
 
 import java.lang.invoke.VarHandle;
+import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
+
+import static io.github.lumine1909.reflexion.internal.UnsafeUtil.IMPL_LOOKUP;
 
 public final class VarHolder {
 
@@ -71,6 +74,15 @@ public final class VarHolder {
         () -> o45, () -> o46, () -> o47, () -> o48, () -> o49,
     };
     public static AtomicInteger COUNTER = new AtomicInteger();
+
+    @SuppressWarnings("DataFlowIssue")
+    public static Supplier<VarHandle> createSupplier(Field field) {
+        try {
+            return createSupplier(IMPL_LOOKUP.unreflectVarHandle(field));
+        } catch (Throwable t) {
+            return null;
+        }
+    }
 
     public static Supplier<VarHandle> createSupplier(VarHandle varHandle) {
         int index = COUNTER.getAndIncrement();
