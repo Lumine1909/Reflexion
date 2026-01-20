@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.lumine1909"
-version = "3.0.0-preview"
+version = "3.0.0"
 
 repositories {
     mavenCentral()
