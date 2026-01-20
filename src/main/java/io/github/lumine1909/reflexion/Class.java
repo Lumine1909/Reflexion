@@ -37,7 +37,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
      * Loads a class by its fully-qualified name.
      *
      * @param name the class name
-     * @param <T> inferred class type
+     * @param <T>  inferred class type
      * @return a {@link Class} wrapper for the loaded class
      * @throws OperationException if the class cannot be loaded
      */
@@ -54,7 +54,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
      * Loads a class by name, returning {@code null} if loading fails.
      *
      * @param name the class name
-     * @param <T> inferred class type
+     * @param <T>  inferred class type
      * @return a {@link Class} wrapper or {@code null} if not found
      */
     public static <T> Class<T> forNameOrNull(String name) {
@@ -68,10 +68,10 @@ public record Class<T>(java.lang.Class<T> javaClass) {
     /**
      * Loads a class with explicit initialization and class loader control.
      *
-     * @param name the class name
+     * @param name       the class name
      * @param initialize whether the class should be initialized
-     * @param loader the class loader to use
-     * @param <T> inferred class type
+     * @param loader     the class loader to use
+     * @param <T>        inferred class type
      * @return a {@link Class} wrapper
      * @throws OperationException if loading fails
      */
@@ -88,7 +88,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
      * Wraps an existing {@link java.lang.Class}.
      *
      * @param clazz the class to wrap
-     * @param <T> class type
+     * @param <T>   class type
      * @return a new {@link Class} wrapper
      */
     public static <T> Class<T> of(java.lang.Class<T> clazz) {
@@ -105,7 +105,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
      * Looks up a declared field by name.
      *
      * @param name field name
-     * @param <S> field type
+     * @param <S>  field type
      * @return a {@link Field} wrapper
      * @throws NotFoundException if the field does not exist
      */
@@ -118,7 +118,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
      * Same as {@link #getField(String)} but returns {@code null} on failure.
      *
      * @param name field name
-     * @param <S> field type
+     * @param <S>  field type
      * @return a {@link Field} or {@code null}
      */
     @SuppressWarnings("rawtypes")
@@ -135,7 +135,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
      *
      * @param name field name
      * @param type expected field type
-     * @param <S> field type
+     * @param <S>  field type
      * @return a {@link Field} wrapper
      * @throws NotFoundException if the field does not exist or type mismatches
      */
@@ -150,7 +150,7 @@ public record Class<T>(java.lang.Class<T> javaClass) {
      *
      * @param name field name
      * @param type expected field type (nullable)
-     * @param <S> field type
+     * @param <S>  field type
      * @return a {@link Field} wrapper
      */
     public <S> Field<S> getField(String name, java.lang.Class<S> type) {
@@ -170,10 +170,10 @@ public record Class<T>(java.lang.Class<T> javaClass) {
     /**
      * Looks up a method with wrapper-based parameter and return types.
      *
-     * @param name method name
-     * @param returnType expected return type
+     * @param name           method name
+     * @param returnType     expected return type
      * @param parameterTypes parameter types
-     * @param <S> return type
+     * @param <S>            return type
      * @return a {@link Method} wrapper
      */
     public <S> Method<S> getMethod(String name, Class<S> returnType, Class<?>... parameterTypes) {
@@ -201,10 +201,10 @@ public record Class<T>(java.lang.Class<T> javaClass) {
      *   <li>{@code findStatic}</li>
      * </ol>
      *
-     * @param name method name
-     * @param returnType expected return type
+     * @param name           method name
+     * @param returnType     expected return type
      * @param parameterTypes parameter types
-     * @param <S> return type
+     * @param <S>            return type
      * @return a {@link Method} wrapper
      * @throws NotFoundException if no matching method is found
      */
@@ -216,21 +216,24 @@ public record Class<T>(java.lang.Class<T> javaClass) {
                 throw new OperationException(null);
             }
             return new Method<>(method, parameterTypes.length, Modifier.isStatic(method.getModifiers()), methodHandle, createSpreader(methodHandle, Modifier.isStatic(method.getModifiers())), MethodHolder.createSupplier(methodHandle));
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
 
         try {
             MethodHandle methodHandle = IMPL_LOOKUP
                 .findVirtual(javaClass, name, MethodType.methodType(returnType, parameterTypes))
                 .asType(MethodType.methodType(Object.class, Object[].class).generic());
             return new Method<>(null, parameterTypes.length, false, methodHandle, createSpreader(methodHandle, false), MethodHolder.createSupplier(methodHandle));
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
 
         try {
             MethodHandle methodHandle = IMPL_LOOKUP
                 .findStatic(javaClass, name, MethodType.methodType(returnType, parameterTypes))
                 .asType(MethodType.methodType(Object.class, Object[].class).generic());
             return new Method<>(null, parameterTypes.length, true, methodHandle, createSpreader(methodHandle, true), MethodHolder.createSupplier(methodHandle));
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
 
         throw new NotFoundException("Can not find method \"" + name + "\" in " + javaClass + " with return type " + returnType + " and parameter types " + Arrays.toString(parameterTypes));
     }

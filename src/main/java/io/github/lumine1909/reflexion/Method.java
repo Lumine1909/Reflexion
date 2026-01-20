@@ -22,7 +22,8 @@ import java.util.function.Supplier;
  *
  * @param <T> the method return type
  */
-public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount, boolean isStatic, MethodHandle methodHandle, MethodHandle spreader, Supplier<MethodHandle> supplier) {
+public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount, boolean isStatic,
+                        MethodHandle methodHandle, MethodHandle spreader, Supplier<MethodHandle> supplier) {
 
     /**
      * Looks up a method by name, return type, and parameter types
@@ -61,7 +62,7 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
      * For static methods, {@code instance} is ignored and may be {@code null}.</p>
      *
      * @param instance the target instance, or {@code null} for static methods
-     * @param args method arguments
+     * @param args     method arguments
      * @return the invocation result
      * @throws OperationException if invocation fails
      */

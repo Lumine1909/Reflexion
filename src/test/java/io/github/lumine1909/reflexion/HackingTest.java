@@ -2,7 +2,6 @@ package io.github.lumine1909.reflexion;
 
 import io.github.lumine1909.reflexion.internal.UnsafeUtil;
 import org.junit.jupiter.api.Test;
-import sun.misc.Unsafe;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -11,7 +10,6 @@ import static io.github.lumine1909.reflexion.internal.UnsafeUtil.INTERNAL_UNSAFE
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HackingTest {
-
 
     @Test
     public void testHackRecord() {
@@ -39,6 +37,7 @@ public class HackingTest {
         assertEquals(A.class, base);
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testFilteredField() {
         UnsafeUtil.clearReflectionFilter();

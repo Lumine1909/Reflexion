@@ -27,7 +27,8 @@ import static io.github.lumine1909.reflexion.field.UnsafeFieldHolder.createHolde
  * @param <T> the field type
  */
 @SuppressWarnings("unchecked")
-public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> holder, boolean isStatic, Supplier<VarHandle> supplier) {
+public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> holder, boolean isStatic,
+                       Supplier<VarHandle> supplier) {
 
     /**
      * Creates a {@link Field} wrapper from a reflective {@link java.lang.reflect.Field}
@@ -42,9 +43,9 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
      * Looks up a field by name and type from the given class.
      *
      * @param clazz the declaring class
-     * @param name the field name
-     * @param type the expected field type
-     * @param <T> field type
+     * @param name  the field name
+     * @param type  the expected field type
+     * @param <T>   field type
      * @return a {@link Field} wrapper
      */
     public static <T> Field<T> of(Class<?> clazz, String name, Class<T> type) {
@@ -55,9 +56,9 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
      * Looks up a field by name and type from the given class name.
      *
      * @param className fully-qualified class name
-     * @param name field name
-     * @param type expected field type
-     * @param <T> field type
+     * @param name      field name
+     * @param type      expected field type
+     * @param <T>       field type
      * @return a {@link Field} wrapper
      */
     public static <T> Field<T> of(String className, String name, Class<T> type) {
@@ -68,8 +69,8 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
      * Looks up a field by name from the given class.
      *
      * @param clazz the declaring class
-     * @param name the field name
-     * @param <T> inferred field type
+     * @param name  the field name
+     * @param <T>   inferred field type
      * @return a {@link Field} wrapper
      */
     public static <T> Field<T> of(Class<?> clazz, String name) {
@@ -80,8 +81,8 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
      * Looks up a field by name from the given class name.
      *
      * @param className fully-qualified class name
-     * @param name the field name
-     * @param <T> inferred field type
+     * @param name      the field name
+     * @param <T>       inferred field type
      * @return a {@link Field} wrapper
      */
     public static <T> Field<T> of(String className, String name) {
@@ -132,7 +133,7 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
      * Reads the field value without static typing.
      *
      * @param instance the target instance, or {@code null} for static fields
-     * @param <S> expected return type
+     * @param <S>      expected return type
      * @return the field value
      */
     public <S> S getUntyped(Object instance) {
@@ -143,7 +144,7 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
      * Reads the field value without static typing using an inlined {@link VarHandle}.
      *
      * @param instance the target instance, or {@code null} for static fields
-     * @param <S> expected return type
+     * @param <S>      expected return type
      * @return the field value
      * @throws OperationException if access fails
      */
@@ -163,7 +164,7 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
      * Writes a value to the field.
      *
      * @param instance the target instance, or {@code null} for static fields
-     * @param value the new field value
+     * @param value    the new field value
      */
     public void set(Object instance, T value) {
         holder.set(instance, value);
@@ -175,7 +176,7 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder<T> h
      * <p>This method is typically faster than {@link #set(Object, Object)}.</p>
      *
      * @param instance the target instance, or {@code null} for static fields
-     * @param value the new field value
+     * @param value    the new field value
      * @throws OperationException if access fails
      */
     public void setFast(Object instance, T value) {
