@@ -31,7 +31,6 @@ public class UnsafeUtil {
             put(unsafe, null, null, null, null, null, null);
             clearReflectionFilter();
         } catch (Throwable t) {
-            System.out.println("114514");
             t.printStackTrace();
         }
     }
