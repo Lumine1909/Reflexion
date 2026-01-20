@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.IMPL_LOOKUP;
 
-public class VarHolder {
+public final class VarHolder {
 
     // Placeholders to exploit java inline
     private static final VarHandle o0 = null;
@@ -75,11 +75,19 @@ public class VarHolder {
     };
     public static AtomicInteger COUNTER = new AtomicInteger();
 
-    public static Supplier<VarHandle> createSupplier(Field javaField) {
+    @SuppressWarnings("DataFlowIssue")
+    public static Supplier<VarHandle> createSupplier(Field field) {
+        try {
+            return createSupplier(IMPL_LOOKUP.unreflectVarHandle(field));
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    public static Supplier<VarHandle> createSupplier(VarHandle varHandle) {
         int index = COUNTER.getAndIncrement();
         try {
-            VarHandle varHandle = IMPL_LOOKUP.unreflectVarHandle(javaField);
-            UnsafeUtil.putValue(VarHolder.class.getDeclaredField("o" + index), varHandle);
+            UnsafeUtil.putObject(VarHolder.class.getDeclaredField("o" + index), varHandle);
             return SUPPLIERS[index];
         } catch (Throwable t) {
             return null;
