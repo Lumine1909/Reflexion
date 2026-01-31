@@ -77,6 +77,7 @@ public final class VarHolder {
 
     @SuppressWarnings("DataFlowIssue")
     public static Supplier<VarHandle> createSupplier(Field field) {
+        if (field.getType().isPrimitive()) return null;
         try {
             return createSupplier(IMPL_LOOKUP.unreflectVarHandle(field));
         } catch (Throwable t) {

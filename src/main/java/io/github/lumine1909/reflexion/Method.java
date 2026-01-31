@@ -87,6 +87,9 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
             case 3 -> methodHandle.invokeExact(args[0], args[1], args[2]);
             case 4 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3]);
             case 5 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3], args[4]);
+            case 6 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5]);
+            case 7 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+            case 8 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
             default -> spreader.invokeExact(args);
         };
     }
@@ -100,6 +103,10 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
             case 3 -> methodHandle.invokeExact(instance, args[0], args[1], args[2]);
             case 4 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3]);
             case 5 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4]);
+            case 6 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5]);
+            case 7 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+            case 8 ->
+                methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
             default -> spreader.invokeExact(instance, args);
         };
     }
