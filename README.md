@@ -20,18 +20,18 @@ Performance: almost same as `MethodHandle`/`VarHandle` with `static final` modif
 | Benchmark.customCallSF       | avgt | 20  | 1.380 | ± 0.010 | ns/op |
 |                              |      |     |       |         |       |
 | Benchmark.reflectAccess      | avgt | 20  | 5.590 | ± 0.046 | ns/op |
-| Benchmark.reflectAccessFast  | avgt | 20  | 0.575 | ± 0.005 | ns/op |
+| Benchmark.reflectAccessSF    | avgt | 20  | 0.575 | ± 0.005 | ns/op |
 | Benchmark.reflectMutate      | avgt | 20  | 6.935 | ± 0.057 | ns/op |
-| Benchmark.reflectMutateFast  | avgt | 20  | 1.639 | ± 0.030 | ns/op |
+| Benchmark.reflectMutateSF    | avgt | 20  | 1.639 | ± 0.030 | ns/op |
 | Benchmark.reflectCall        | avgt | 20  | 7.186 | ± 0.138 | ns/op |
-| Benchmark.reflectCallFast    | avgt | 20  | 1.620 | ± 0.016 | ns/op |
+| Benchmark.reflectCallSF      | avgt | 20  | 1.620 | ± 0.016 | ns/op |
 |                              |      |     |       |         |       |
 | Benchmark.vhAccess           | avgt | 20  | 5.238 | ± 0.046 | ns/op |
-| Benchmark.vhAccessFast       | avgt | 20  | 0.577 | ± 0.007 | ns/op |
+| Benchmark.vhAccessSF         | avgt | 20  | 0.577 | ± 0.007 | ns/op |
 | Benchmark.vhMutate           | avgt | 20  | 6.188 | ± 0.069 | ns/op |
-| Benchmark.vhMutateFast       | avgt | 20  | 1.044 | ± 0.006 | ns/op |
+| Benchmark.vhMutateSF         | avgt | 20  | 1.044 | ± 0.006 | ns/op |
 | Benchmark.mhCall             | avgt | 20  | 4.515 | ± 0.054 | ns/op |
-| Benchmark.mhCallFast         | avgt | 20  | 1.381 | ± 0.012 | ns/op |
+| Benchmark.mhCallSF           | avgt | 20  | 1.381 | ± 0.012 | ns/op |
 
 
 `SF`: static final modifier.
@@ -127,7 +127,7 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public String reflectAccessFast() {
+    public String reflectAccessSF() {
         return (String) final$vh$value.get(object);
     }
 
@@ -137,7 +137,7 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void reflectMutateFast() throws Throwable {
+    public void reflectMutateSF() throws Throwable {
         final$field$value.set(object, "42");
     }
 
@@ -147,7 +147,7 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public String reflectCallFast() throws Throwable {
+    public String reflectCallSF() throws Throwable {
         return (String) final$method$call.invoke(object, 42);
     }
 
@@ -157,7 +157,7 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public String mhCallFast() throws Throwable {
+    public String mhCallSF() throws Throwable {
         return (String) final$mh$call.invoke(object, 42);
     }
 
@@ -167,7 +167,7 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public String vhAccessFast() {
+    public String vhAccessSF() {
         return (String) final$vh$value.get(object);
     }
 
@@ -177,7 +177,7 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void vhMutateFast() {
+    public void vhMutateSF() {
         final$vh$value.set(object, "42");
     }
 
