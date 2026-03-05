@@ -2,6 +2,15 @@
 
 A "fast" and "powerful" implementation library for Java reflection.
 
+```kts
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation("io.github.lumine1909:reflexion:3.1.0")
+}
+```
+
 Performance: almost same as `MethodHandle`/`VarHandle` with `static final` modifier, much faster than them without it.
 
 | Benchmark                    | Mode | Cnt | Score | Error   | Units |
