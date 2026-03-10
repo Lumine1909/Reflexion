@@ -9,9 +9,9 @@ public class FieldTest {
     @Test
     public void testField() {
         A a = new A();
-        Field<Byte> fb = Field.of("io.github.lumine1909.reflexion.A", "b", byte.class);
+        Field<Byte> fb = Field.of("io.github.lumine1909.reflexion.A", "b");
         Field<Integer> fi = Field.of(A.class, "i");
-        Field<String> fs = Field.of(A.class, "str", String.class);
+        Field<String> fs = Field.of(A.class, "str");
         assertEquals((byte) 42, fb.getByte(a));
         assertEquals(42, fi.getInt(null));
         assertEquals("42", fs.get(a));

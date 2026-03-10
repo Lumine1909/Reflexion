@@ -35,9 +35,26 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
      * @param parameterTypes the parameter types
      * @param <T>            return type
      * @return a {@link Method} wrapper
+     * @throws io.github.lumine1909.reflexion.exception.NotFoundException if field not found
      */
     public static <T> Method<T> of(Class<?> clazz, String name, Class<T> returnType, Class<?>... parameterTypes) {
         return io.github.lumine1909.reflexion.Class.of(clazz).getMethod(name, returnType, parameterTypes);
+    }
+
+    /**
+     * Looks up a method by name, return type, and parameter types
+     * from the given class.
+     *
+     * @param clazz          the declaring class
+     * @param name           the method name
+     * @param nullable       if returns null instead of throws exceptions
+     * @param returnType     the expected return type
+     * @param parameterTypes the parameter types
+     * @param <T>            return type
+     * @return a {@link Method} wrapper or {@code null} if not found
+     */
+    public static <T> Method<T> of(Class<?> clazz, String name, boolean nullable, Class<T> returnType, Class<?>... parameterTypes) {
+        return io.github.lumine1909.reflexion.Class.of(clazz).getMethod(name, nullable, returnType, parameterTypes);
     }
 
     /**
@@ -52,6 +69,22 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
      * @return a {@link Method} wrapper
      */
     public static <T> Method<T> of(String className, String name, Class<T> returnType, Class<?>... parameterTypes) {
+        return io.github.lumine1909.reflexion.Class.forName(className).getMethod(name, returnType, parameterTypes);
+    }
+
+    /**
+     * Looks up a method by name, return type, and parameter types
+     * from the given class name.
+     *
+     * @param className      fully-qualified class name
+     * @param name           the method name
+     * @param nullable       if returns null instead of throws exceptions
+     * @param returnType     the expected return type
+     * @param parameterTypes the parameter types
+     * @param <T>            return type
+     * @return a {@link Method} wrapper
+     */
+    public static <T> Method<T> of(String className, String name, boolean nullable, Class<T> returnType, Class<?>... parameterTypes) {
         return io.github.lumine1909.reflexion.Class.forName(className).getMethod(name, returnType, parameterTypes);
     }
 
