@@ -40,41 +40,28 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder hold
     }
 
     /**
-     * Looks up a field by name and type from the given class.
+     * Looks up a field by name from the given class.
      *
      * @param clazz the declaring class
      * @param name  the field name
-     * @param type  the expected field type
-     * @param <T>   field type
      * @return a {@link Field} wrapper
+     * @throws io.github.lumine1909.reflexion.exception.NotFoundException if not found
      */
-    public static <T> Field<T> of(Class<?> clazz, String name, Class<T> type) {
-        return io.github.lumine1909.reflexion.Class.of(clazz).getField(name, type);
-    }
-
-    /**
-     * Looks up a field by name and type from the given class name.
-     *
-     * @param className fully-qualified class name
-     * @param name      field name
-     * @param type      expected field type
-     * @param <T>       field type
-     * @return a {@link Field} wrapper
-     */
-    public static <T> Field<T> of(String className, String name, Class<T> type) {
-        return io.github.lumine1909.reflexion.Class.forName(className).getField(name, type);
+    public static <T> Field<T> of(Class<?> clazz, String name) {
+        return io.github.lumine1909.reflexion.Class.of(clazz).getField(name);
     }
 
     /**
      * Looks up a field by name from the given class.
      *
-     * @param clazz the declaring class
-     * @param name  the field name
-     * @param <T>   inferred field type
-     * @return a {@link Field} wrapper
+     * @param clazz    the declaring class
+     * @param name     the field name
+     * @param <T>      inferred field type
+     * @param nullable if returns null instead of throws exceptions
+     * @return a {@link Field} wrapper or {@code null} if not found
      */
-    public static <T> Field<T> of(Class<?> clazz, String name) {
-        return io.github.lumine1909.reflexion.Class.of(clazz).getField(name);
+    public static <T> Field<T> of(Class<?> clazz, String name, boolean nullable) {
+        return io.github.lumine1909.reflexion.Class.of(clazz).getField(name, nullable);
     }
 
     /**
@@ -82,11 +69,23 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder hold
      *
      * @param className fully-qualified class name
      * @param name      the field name
-     * @param <T>       inferred field type
      * @return a {@link Field} wrapper
+     * @throws io.github.lumine1909.reflexion.exception.NotFoundException if field not found
      */
     public static <T> Field<T> of(String className, String name) {
         return io.github.lumine1909.reflexion.Class.forName(className).getField(name);
+    }
+
+    /**
+     * Looks up a field by name from the given class name.
+     *
+     * @param className fully-qualified class name
+     * @param name      the field name
+     * @param nullable  if returns null instead of throws exceptions
+     * @return a {@link Field} wrapper or {@code null} if not found
+     */
+    public static <T> Field<T> of(String className, String name, boolean nullable) {
+        return io.github.lumine1909.reflexion.Class.forName(className).getField(name, nullable);
     }
 
     /**
@@ -181,20 +180,19 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder hold
      * @throws OperationException if access fails
      */
     public void setFast(Object instance, T value) {
-        set(instance, value);
-//        try {
-//            if (supplier != null) {
-//                if (instance == null) {
-//                    supplier.get().set(value);
-//                } else {
-//                    supplier.get().set(instance, value);
-//                }
-//            } else {
-//                set(instance, value);
-//            }
-//        } catch (Throwable t) {
-//            throw new OperationException(t);
-//        }
+        try {
+            if (supplier != null) {
+                if (instance == null) {
+                    supplier.get().set(value);
+                } else {
+                    supplier.get().set(instance, value);
+                }
+            } else {
+                set(instance, value);
+            }
+        } catch (Throwable t) {
+            throw new OperationException(t);
+        }
     }
 
     /**
