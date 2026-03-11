@@ -85,7 +85,8 @@ public record Field<T>(java.lang.reflect.Field javaField, UnsafeFieldHolder hold
      * @return a {@link Field} wrapper or {@code null} if not found
      */
     public static <T> Field<T> of(String className, String name, boolean nullable) {
-        return io.github.lumine1909.reflexion.Class.forName(className).getField(name, nullable);
+        io.github.lumine1909.reflexion.Class<?> clazz = io.github.lumine1909.reflexion.Class.forName(className, nullable);
+        return clazz == null ? null : clazz.getField(name, nullable);
     }
 
     /**

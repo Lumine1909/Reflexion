@@ -3,6 +3,7 @@ package io.github.lumine1909.reflexion;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FieldTest {
 
@@ -27,6 +28,14 @@ public class FieldTest {
         assertEquals(41, fi.getFast(null));
         assertEquals("41", fs.get(a));
         assertEquals("41", fs.getFast(a));
+    }
+
+    @Test
+    public void testNull() {
+        Field<Byte> null1 = Field.of("io.github.lumine1909.reflexion.B", "b", true);
+        Field<Byte> null2 = Field.of("io.github.lumine1909.reflexion.A", "c", true);
+        assertNull(null1);
+        assertNull(null2);
     }
 }
 

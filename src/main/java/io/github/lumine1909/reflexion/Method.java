@@ -85,7 +85,8 @@ public record Method<T>(java.lang.reflect.Method javaMethod, int parameterCount,
      * @return a {@link Method} wrapper
      */
     public static <T> Method<T> of(String className, String name, boolean nullable, Class<T> returnType, Class<?>... parameterTypes) {
-        return io.github.lumine1909.reflexion.Class.forName(className).getMethod(name, returnType, parameterTypes);
+        io.github.lumine1909.reflexion.Class<?> clazz = io.github.lumine1909.reflexion.Class.forName(className, nullable);
+        return clazz == null ? null : clazz.getMethod(name, nullable, returnType, parameterTypes);
     }
 
     /**
