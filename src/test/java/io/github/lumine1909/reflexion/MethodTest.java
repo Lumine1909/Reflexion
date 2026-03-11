@@ -3,6 +3,7 @@ package io.github.lumine1909.reflexion;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MethodTest {
 
@@ -23,5 +24,13 @@ public class MethodTest {
         longTest.invoke(a, 0, 1, 2, 3, 4, "5");
         longTestStatic.invoke(a, 0, 1, 2, 3, 4, "5");
         assertEquals("43", getStr.invoke(a));
+    }
+
+    @Test
+    public void testNull() {
+        Method<Integer> null1 = Method.of("test.class", "null", true, int.class);
+        Method<String> null2 = Method.of(A.class, "null", true, String.class);
+        assertNull(null1);
+        assertNull(null2);
     }
 }
