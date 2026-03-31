@@ -2,7 +2,7 @@
 
 A "fast" and "powerful" implementation library for Java reflection.
 
-```kts
+```kotlin
 repositories {
     mavenCentral()
 }
@@ -13,37 +13,43 @@ dependencies {
 
 Performance: almost same as `MethodHandle`/`VarHandle` with `static final` modifier, much faster than them without it.
 
-| Benchmark                    | Mode | Cnt | Score  | Error  | Units |
-|------------------------------|------|-----|--------|--------|-------|
-| Benchmark.directAccess       | avgt | 20  | 0.543  | ±0.018 | ns/op |
-| Benchmark.directMutate       | avgt | 20  | 0.800  | ±0.032 | ns/op |
-| Benchmark.directCall         | avgt | 20  | 0.920  | ±0.032 | ns/op |
-|                              |      |     |        |        |       |
-| Benchmark.customAccess       | avgt | 20  | 1.238  | ±0.032 | ns/op |
-| Benchmark.customAccessSF     | avgt | 20  | 0.500  | ±0.024 | ns/op |
-| Benchmark.customAccessFast   | avgt | 20  | 0.873  | ±0.051 | ns/op |
-| Benchmark.customAccessFastSF | avgt | 20  | 0.487  | ±0.025 | ns/op |
-| Benchmark.customMutate       | avgt | 20  | 1.814  | ±0.156 | ns/op |
-| Benchmark.customMutateSF     | avgt | 20  | 0.815  | ±0.041 | ns/op |
-| Benchmark.customMutateFast   | avgt | 20  | 1.271  | ±0.061 | ns/op |
-| Benchmark.customMutateFastSF | avgt | 20  | 0.808  | ±0.030 | ns/op |
-| Benchmark.customCall         | avgt | 20  | 1.933  | ±0.180 | ns/op |
-| Benchmark.customCallSF       | avgt | 20  | 0.828  | ±0.017 | ns/op |
-|                              |      |     |        |        |       |
-| Benchmark.vhAccess           | avgt | 20  | 6.525  | ±0.381 | ns/op |
-| Benchmark.vhAccessSF         | avgt | 20  | 0.548  | ±0.015 | ns/op |
-| Benchmark.vhMutate           | avgt | 20  | 12.536 | ±1.734 | ns/op |
-| Benchmark.vhMutateSF         | avgt | 20  | 0.989  | ±0.245 | ns/op |
-| Benchmark.mhCall             | avgt | 20  | 4.811  | ±0.156 | ns/op |
-| Benchmark.mhCallSF           | avgt | 20  | 0.818  | ±0.016 | ns/op |
-|                              |      |     |        |        |       |
-| Benchmark.reflectAccess      | avgt | 20  | 5.272  | ±0.091 | ns/op |
-| Benchmark.reflectAccessSF    | avgt | 20  | 0.515  | ±0.048 | ns/op |
-| Benchmark.reflectMutate      | avgt | 20  | 6.887  | ±0.107 | ns/op |
-| Benchmark.reflectMutateSF    | avgt | 20  | 1.093  | ±0.204 | ns/op |
-| Benchmark.reflectCall        | avgt | 20  | 8.578  | ±0.228 | ns/op |
-| Benchmark.reflectCallSF      | avgt | 20  | 1.017  | ±0.071 | ns/op |
+Benchmark Environment:
+```
+java version "25.0.2" 2026-01-20 LTS
+Java(TM) SE Runtime Environment Oracle GraalVM 25.0.2+10.1 (build 25.0.2+10-LTS-jvmci-b01)
+Java HotSpot(TM) 64-Bit Server VM Oracle GraalVM 25.0.2+10.1 (build 25.0.2+10-LTS-jvmci-b01, mixed mode, sharing)
+```
 
+| Benchmark                    | Mode | Cnt | Score | Error  | Units |
+|------------------------------|------|-----|-------|--------|-------|
+| Benchmark.directAccess       | avgt | 20  | 0.481 | ±0.007 | ns/op |
+| Benchmark.directMutate       | avgt | 20  | 0.732 | ±0.010 | ns/op |
+| Benchmark.directCall         | avgt | 20  | 0.803 | ±0.007 | ns/op |
+|                              |      |     |       |        |       |
+| Benchmark.customAccess       | avgt | 20  | 1.169 | ±0.009 | ns/op |
+| Benchmark.customAccessFast   | avgt | 20  | 0.827 | ±0.015 | ns/op |
+| Benchmark.customAccessSF     | avgt | 20  | 0.474 | ±0.005 | ns/op |
+| Benchmark.customAccessFastSF | avgt | 20  | 0.472 | ±0.004 | ns/op |
+| Benchmark.customMutate       | avgt | 20  | 1.684 | ±0.014 | ns/op |
+| Benchmark.customMutateFast   | avgt | 20  | 1.231 | ±0.042 | ns/op |
+| Benchmark.customMutateSF     | avgt | 20  | 0.728 | ±0.009 | ns/op |
+| Benchmark.customMutateFastSF | avgt | 20  | 0.728 | ±0.010 | ns/op |
+| Benchmark.customCall         | avgt | 20  | 1.812 | ±0.020 | ns/op |
+| Benchmark.customCallSF       | avgt | 20  | 0.803 | ±0.007 | ns/op |
+|                              |      |     |       |        |       |
+| Benchmark.vhAccess           | avgt | 20  | 5.970 | ±0.327 | ns/op |
+| Benchmark.vhAccessSF         | avgt | 20  | 0.476 | ±0.007 | ns/op |
+| Benchmark.vhMutate           | avgt | 20  | 7.739 | ±0.118 | ns/op |
+| Benchmark.vhMutateSF         | avgt | 20  | 0.735 | ±0.011 | ns/op |
+| Benchmark.mhCall             | avgt | 20  | 4.553 | ±0.063 | ns/op |
+| Benchmark.mhCallSF           | avgt | 20  | 0.856 | ±0.022 | ns/op |
+|                              |      |     |       |        |       |
+| Benchmark.reflectAccess      | avgt | 20  | 5.191 | ±0.071 | ns/op |
+| Benchmark.reflectAccessSF    | avgt | 20  | 0.601 | ±0.013 | ns/op |
+| Benchmark.reflectMutate      | avgt | 20  | 7.480 | ±0.157 | ns/op |
+| Benchmark.reflectMutateSF    | avgt | 20  | 0.967 | ±0.028 | ns/op |
+| Benchmark.reflectCall        | avgt | 20  | 7.683 | ±0.062 | ns/op |
+| Benchmark.reflectCallSF      | avgt | 20  | 1.009 | ±0.028 | ns/op |
 
 `SF`: static final modifier.
 
@@ -52,8 +58,6 @@ Performance: almost same as `MethodHandle`/`VarHandle` with `static final` modif
   <summary>Benchmark code</summary>
 
 ```java
-// Benchmark.java
-
 package io.github.lumine1909;
 
 import org.openjdk.jmh.annotations.*;
@@ -61,6 +65,7 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.openjdk.jmh.runner.options.TimeValue;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
@@ -94,7 +99,6 @@ public class Benchmark {
 
     private static final VarHandle final$vh$value;
     private static VarHandle vh$value;
-
 
     static {
         try {
@@ -130,8 +134,8 @@ public class Benchmark {
             .forks(1)
             .warmupIterations(10)
             .measurementIterations(20)
-            .warmupTime(org.openjdk.jmh.runner.options.TimeValue.seconds(1))
-            .measurementTime(org.openjdk.jmh.runner.options.TimeValue.seconds(1))
+            .warmupTime(TimeValue.seconds(1))
+            .measurementTime(TimeValue.seconds(1))
             .warmupBatchSize(1)
             .measurementBatchSize(1)
             .shouldDoGC(false)
@@ -164,8 +168,8 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public String reflectAccessSF() {
-        return (String) final$vh$value.get(object);
+    public String reflectAccessSF() throws Throwable {
+        return (String) final$field$value.get(object);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
@@ -190,12 +194,12 @@ public class Benchmark {
 
     @org.openjdk.jmh.annotations.Benchmark
     public String mhCall() throws Throwable {
-        return (String) mh$call.invoke(object, 42);
+        return (String) mh$call.invokeExact(object, 42);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String mhCallSF() throws Throwable {
-        return (String) final$mh$call.invoke(object, 42);
+        return (String) final$mh$call.invokeExact(object, 42);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
