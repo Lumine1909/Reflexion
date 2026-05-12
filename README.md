@@ -1,13 +1,13 @@
 ### Reflexion
 
-A "fast" and "powerful" implementation library for Java reflection.
+A "fast" and "powerful" lightweight Java reflection library.
 
 ```kotlin
 repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("io.github.lumine1909:reflexion:0.3.2")
+    implementation("io.github.lumine1909:reflexion:0.3.3")
 }
 ```
 
