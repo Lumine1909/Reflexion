@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.lumine1909"
-version = "0.3.2"
+version = "0.3.3"
 
 repositories {
     mavenCentral()
@@ -36,7 +36,7 @@ mavenPublishing {
     )
     pom {
         name.set("reflexion")
-        description.set("A \"fast\" and \"powerful\" implementation library for Java reflection.")
+        description.set("A \"fast\" and \"powerful\" lightweight Java reflection library.")
         url.set("https://github.com/Lumine1909/Reflexion")
         licenses {
             license {
