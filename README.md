@@ -7,7 +7,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("io.github.lumine1909:reflexion:0.3.3")
+    implementation("io.github.lumine1909:reflexion:0.4.0")
 }
 ```
 

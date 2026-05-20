@@ -32,8 +32,8 @@ public class FieldTest {
 
     @Test
     public void testNull() {
-        Field<Byte> null1 = Field.of("io.github.lumine1909.reflexion.B", "b", true);
-        Field<Byte> null2 = Field.of("io.github.lumine1909.reflexion.A", "c", true);
+        Field<Byte> null1 = Field.of("io.github.lumine1909.reflexion.B", "b", 1);
+        Field<Byte> null2 = Field.of("io.github.lumine1909.reflexion.A", "c", 1);
         assertNull(null1);
         assertNull(null2);
     }
