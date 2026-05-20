@@ -11,13 +11,14 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 @SuppressWarnings({"deprecation", "DataFlowIssue"})
-public class UnsafeUtil {
+public final class UnsafeUtil {
 
     public static final Unsafe UNSAFE = null;
     public static final MethodHandles.Lookup IMPL_LOOKUP = null;
     public static final Object INTERNAL_UNSAFE = null;
 
     private static final java.lang.Class<?> class$InternalUnsafe = null;
+    private static final MethodHandle mh$fieldOffset = null;
     private static final MethodHandle mh$objectFieldOffset = null;
     private static final MethodHandle mh$staticFieldBase = null;
     private static final MethodHandle mh$staticFieldOffset = null;
@@ -28,7 +29,7 @@ public class UnsafeUtil {
             field$unsafe.setAccessible(true);
             Unsafe unsafe = (Unsafe) field$unsafe.get(null);
 
-            put(unsafe, null, null, null, null, null, null);
+            put(unsafe, null, null, null);
             clearReflectionFilter();
         } catch (Throwable t) {
             t.printStackTrace();
@@ -36,14 +37,14 @@ public class UnsafeUtil {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static void put(Unsafe unsafe, MethodHandles.Lookup implLookup, Class<?> class$InternalUnsafe, Object internalUnsafe, MethodHandle objectFieldOffset, MethodHandle staticFieldBase, MethodHandle staticFieldOffset) {
+    public static void put(Unsafe unsafe, MethodHandles.Lookup implLookup, Class<?> class$InternalUnsafe, Object internalUnsafe) {
         if (unsafe == null && UNSAFE == null) {
             throw new NullPointerException("Unsafe is null");
         }
         try {
             if (UNSAFE == null) {
                 Field f = UnsafeUtil.class.getDeclaredField("UNSAFE");
-                unsafe.putObject(unsafe.staticFieldBase(f), unsafe.staticFieldOffset(f), unsafe);
+                unsafe.putObject(UnsafeUtil.class, unsafe.staticFieldOffset(f), unsafe);
             }
             if (IMPL_LOOKUP == null) {
                 if (implLookup == null) {
@@ -51,14 +52,14 @@ public class UnsafeUtil {
                     implLookup = (MethodHandles.Lookup) UNSAFE.getObject(MethodHandles.Lookup.class, UNSAFE.staticFieldOffset(field$implLookup));
                 }
                 Field f = UnsafeUtil.class.getDeclaredField("IMPL_LOOKUP");
-                UNSAFE.putObject(UNSAFE.staticFieldBase(f), UNSAFE.staticFieldOffset(f), implLookup);
+                UNSAFE.putObject(UnsafeUtil.class, UNSAFE.staticFieldOffset(f), implLookup);
             }
             if (UnsafeUtil.class$InternalUnsafe == null) {
                 if (class$InternalUnsafe == null) {
                     class$InternalUnsafe = Class.forName("jdk.internal.misc.Unsafe");
                 }
                 Field f = UnsafeUtil.class.getDeclaredField("class$InternalUnsafe");
-                UNSAFE.putObject(UNSAFE.staticFieldBase(f), UNSAFE.staticFieldOffset(f), class$InternalUnsafe);
+                UNSAFE.putObject(UnsafeUtil.class, UNSAFE.staticFieldOffset(f), class$InternalUnsafe);
             }
             if (INTERNAL_UNSAFE == null) {
                 if (internalUnsafe == null) {
@@ -66,22 +67,24 @@ public class UnsafeUtil {
                     internalUnsafe = UNSAFE.getObject(UNSAFE.staticFieldBase(field$internalUnsafe), UNSAFE.staticFieldOffset(field$internalUnsafe));
                 }
                 Field f = UnsafeUtil.class.getDeclaredField("INTERNAL_UNSAFE");
-                UNSAFE.putObject(UNSAFE.staticFieldBase(f), UNSAFE.staticFieldOffset(f), internalUnsafe);
+                UNSAFE.putObject(UnsafeUtil.class, UNSAFE.staticFieldOffset(f), internalUnsafe);
+            }
+            if (mh$fieldOffset == null) {
+                MethodHandle fieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "objectFieldOffset", MethodType.methodType(long.class, Class.class, String.class));
+                Field f = UnsafeUtil.class.getDeclaredField("mh$fieldOffset");
+                UNSAFE.putObject(UnsafeUtil.class, UNSAFE.staticFieldOffset(f), fieldOffset);
             }
             if (mh$objectFieldOffset == null) {
-                objectFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "objectFieldOffset", MethodType.methodType(long.class, Field.class));
-                Field f = UnsafeUtil.class.getDeclaredField("mh$objectFieldOffset");
-                UNSAFE.putObject(UNSAFE.staticFieldBase(f), UNSAFE.staticFieldOffset(f), objectFieldOffset);
+                MethodHandle objectFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "objectFieldOffset", MethodType.methodType(long.class, Field.class));
+                UNSAFE.putObject(UnsafeUtil.class, fieldOffset(UnsafeUtil.class, "mh$objectFieldOffset"), objectFieldOffset);
             }
             if (mh$staticFieldBase == null) {
-                staticFieldBase = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldBase", MethodType.methodType(Object.class, Field.class));
-                Field f = UnsafeUtil.class.getDeclaredField("mh$staticFieldBase");
-                UNSAFE.putObject(UNSAFE.staticFieldBase(f), UNSAFE.staticFieldOffset(f), staticFieldBase);
+                MethodHandle staticFieldBase = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldBase", MethodType.methodType(Object.class, Field.class));
+                UNSAFE.putObject(UnsafeUtil.class, fieldOffset(UnsafeUtil.class, "mh$staticFieldBase"), staticFieldBase);
             }
             if (mh$staticFieldOffset == null) {
-                staticFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldOffset", MethodType.methodType(long.class, Field.class));
-                Field f = UnsafeUtil.class.getDeclaredField("mh$staticFieldOffset");
-                UNSAFE.putObject(UNSAFE.staticFieldBase(f), UNSAFE.staticFieldOffset(f), staticFieldOffset);
+                MethodHandle staticFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldOffset", MethodType.methodType(long.class, Field.class));
+                UNSAFE.putObject(UnsafeUtil.class, fieldOffset(UnsafeUtil.class, "mh$staticFieldOffset"), staticFieldOffset);
             }
         } catch (Throwable t) {
             throw new OperationException(t);
@@ -119,6 +122,14 @@ public class UnsafeUtil {
         }
         try {
             return (long) mh$staticFieldOffset.invoke(INTERNAL_UNSAFE, field);
+        } catch (Throwable t) {
+            throw new OperationException(t);
+        }
+    }
+
+    public static long fieldOffset(Class<?> clazz, String name) {
+        try {
+            return (long) mh$fieldOffset.invoke(INTERNAL_UNSAFE, clazz, name);
         } catch (Throwable t) {
             throw new OperationException(t);
         }

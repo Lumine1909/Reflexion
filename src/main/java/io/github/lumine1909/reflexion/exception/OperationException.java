@@ -1,6 +1,6 @@
 package io.github.lumine1909.reflexion.exception;
 
-public class OperationException extends RuntimeException {
+public final class OperationException extends RuntimeException {
 
     public OperationException(Throwable cause) {
         super(cause);
@@ -13,6 +13,6 @@ public class OperationException extends RuntimeException {
 
     @Override
     public StackTraceElement[] getStackTrace() {
-        return getCause().getStackTrace();
+        return getCause() == null ? null : getCause().getStackTrace();
     }
 }

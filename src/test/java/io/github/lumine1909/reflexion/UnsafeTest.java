@@ -20,7 +20,7 @@ public class UnsafeTest {
         unsafe.putObject(unsafe.staticFieldBase(f), unsafe.staticFieldOffset(f), null);
         assertNull(UnsafeUtil.UNSAFE);
 
-        UnsafeUtil.put(unsafe, null, null, null, null, null, null);
+        UnsafeUtil.put(unsafe, null, null, null);
         assertNotNull(UnsafeUtil.UNSAFE);
     }
 }
