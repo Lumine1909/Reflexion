@@ -25,7 +25,7 @@ public final class UnsafeField {
         this.staticFlag = -1;
         this.staticBase = clazz;
         this.offset = UnsafeUtil.fieldOffset(clazz, name);
-        this.type = null;
+        this.type = Type.NULL;
     }
 
     private static Type getType(Field javaField) {
@@ -64,7 +64,7 @@ public final class UnsafeField {
             case DOUBLE -> UNSAFE.getDouble(base, offset);
             case CHAR -> UNSAFE.getChar(base, offset);
             case BOOLEAN -> UNSAFE.getBoolean(base, offset);
-            case null -> throw new UnsupportedOperationException("Unknown type");
+            case NULL -> throw new UnsupportedOperationException("Unknown type");
         };
     }
 
@@ -79,7 +79,7 @@ public final class UnsafeField {
             case DOUBLE -> UNSAFE.putDouble(base, offset, (double) value);
             case CHAR -> UNSAFE.putChar(base, offset, (char) value);
             case BOOLEAN -> UNSAFE.putBoolean(base, offset, (boolean) value);
-            case null -> throw new UnsupportedOperationException("Unknown type");
+            case NULL -> throw new UnsupportedOperationException("Unknown type");
         }
     }
 
@@ -156,6 +156,6 @@ public final class UnsafeField {
     }
 
     private enum Type {
-        OBJECT, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR, BOOLEAN
+        NULL, OBJECT, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR, BOOLEAN
     }
 }
