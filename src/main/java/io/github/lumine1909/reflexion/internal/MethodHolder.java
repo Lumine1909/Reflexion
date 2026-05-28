@@ -15,7 +15,7 @@ public final class MethodHolder {
     public static Supplier<MethodHandle> inline(MethodHandle MethodHandle) {
         int index = ID.getAndIncrement();
         try {
-            UnsafeUtil.putObject(MethodHolder.class.getDeclaredField("o" + index), MethodHandle);
+            UnsafeUtil.putObject(MethodHolder.class, "o" + index, MethodHandle);
             return OBJ[index];
         } catch (Throwable t) {
             return null;

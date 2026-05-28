@@ -15,7 +15,7 @@ public final class VarHolder {
     public static Supplier<VarHandle> inline(VarHandle varHandle) {
         int index = ID.getAndIncrement();
         try {
-            UnsafeUtil.putObject(VarHolder.class.getDeclaredField("o" + index), varHandle);
+            UnsafeUtil.putObject(VarHolder.class, "o" + index, varHandle);
             return OBJ[index];
         } catch (Throwable t) {
             return null;

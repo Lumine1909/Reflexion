@@ -29,7 +29,7 @@ public final class UnsafeUtil {
             field$unsafe.setAccessible(true);
             Unsafe unsafe = (Unsafe) field$unsafe.get(null);
 
-            put(unsafe, null, null, null);
+            init(unsafe, null, null, null);
             clearReflectionFilter();
         } catch (Throwable t) {
             t.printStackTrace();
@@ -37,7 +37,7 @@ public final class UnsafeUtil {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static void put(Unsafe unsafe, MethodHandles.Lookup implLookup, Class<?> class$InternalUnsafe, Object internalUnsafe) {
+    public static void init(Unsafe unsafe, MethodHandles.Lookup implLookup, Class<?> class$InternalUnsafe, Object internalUnsafe) {
         if (unsafe == null && UNSAFE == null) {
             throw new NullPointerException("Unsafe is null");
         }
@@ -147,7 +147,7 @@ public final class UnsafeUtil {
         }
     }
 
-    static void putObject(Field target, Object value) {
-        UNSAFE.putObject(staticFieldBase(target), staticFieldOffset(target), value);
+    public static void putObject(Class<?> clazz, String name, Object value) {
+        UNSAFE.putObject(clazz, fieldOffset(clazz, name), value);
     }
 }
