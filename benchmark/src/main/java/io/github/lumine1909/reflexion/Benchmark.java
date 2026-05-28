@@ -77,15 +77,15 @@ public class Benchmark {
         Options options = new OptionsBuilder()
             .include(Benchmark.class.getName())
             .forks(1)
-            .warmupIterations(0)
-            .measurementIterations(1)
+            .warmupIterations(10)
+            .measurementIterations(20)
             .warmupTime(TimeValue.seconds(1))
             .measurementTime(TimeValue.seconds(1))
             .shouldDoGC(false)
             .threads(1)
             .mode(Mode.AverageTime)
             .timeUnit(TimeUnit.NANOSECONDS)
-            .resultFormat(org.openjdk.jmh.results.format.ResultFormatType.JSON)
+            .resultFormat(ResultFormatType.JSON)
             .result("build/reports/jmh/results.json")
             .build();
 
