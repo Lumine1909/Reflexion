@@ -1,6 +1,7 @@
 package io.github.lumine1909.reflexion;
 
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -71,17 +72,21 @@ public class Benchmark {
     }
 
     public static void main(String[] args) throws RunnerException {
+        new java.io.File("build/reports/jmh").mkdirs();
+
         Options options = new OptionsBuilder()
             .include(Benchmark.class.getName())
             .forks(1)
-            .warmupIterations(10)
-            .measurementIterations(20)
+            .warmupIterations(0)
+            .measurementIterations(1)
             .warmupTime(TimeValue.seconds(1))
             .measurementTime(TimeValue.seconds(1))
+            .shouldDoGC(false)
             .threads(1)
             .mode(Mode.AverageTime)
             .timeUnit(TimeUnit.NANOSECONDS)
-            .shouldDoGC(false)
+            .resultFormat(org.openjdk.jmh.results.format.ResultFormatType.JSON)
+            .result("build/reports/jmh/results.json")
             .build();
 
         new Runner(options).run();
