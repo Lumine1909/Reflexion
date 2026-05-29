@@ -55,6 +55,45 @@ jobs:
           import json
           from pathlib import Path
 
+          ORDER = [
+              "directAccess",
+              "directMutate",
+              "directCall",
+
+              "customAccess",
+              "customAccessFast",
+              "customAccessSF",
+              "customAccessFastSF",
+              "customMutate",
+              "customMutateFast",
+              "customMutateSF",
+              "customMutateFastSF",
+              "customCall",
+              "customCallSF",
+
+              "vhAccess",
+              "vhAccessSF",
+              "vhMutate",
+              "vhMutateSF",
+              "mhCall",
+              "mhCallSF",
+
+              "reflectAccess",
+              "reflectAccessSF",
+              "reflectMutate",
+              "reflectMutateSF",
+              "reflectCall",
+              "reflectCallSF",
+          ]
+
+          GROUP_BREAKS = {
+              "customAccess",
+              "vhAccess",
+              "reflectAccess",
+          }
+
+          order = {name: i for i, name in enumerate(ORDER)}
+
           path = Path("benchmark/build/reports/jmh/results.json")
           data = json.loads(path.read_text())
 
@@ -64,21 +103,43 @@ jobs:
               benchmark = entry["benchmark"].split(".")[-1]
               mode = entry["mode"]
               cnt = entry["measurementIterations"]
+
               metric = entry["primaryMetric"]
+
               score = f'{metric["score"]:.3f}'
               unit = metric["scoreUnit"]
 
               error = metric.get("scoreError", "NaN")
               error = "-" if error == "NaN" else f'±{float(error):.3f}'
 
-              rows.append((benchmark, mode, cnt, score, error, unit))
+              rows.append(
+                  (
+                      benchmark,
+                      mode,
+                      cnt,
+                      score,
+                      error,
+                      unit
+                  )
+              )
+
+          rows.sort(key=lambda row: order.get(row[0], 9999))
 
           lines = [
               "| Benchmark | Mode | Cnt | Score | Error | Units |",
               "|---|---|---|---|---|---|",
           ]
 
+          first = True
+
           for row in rows:
+              benchmark = row[0]
+
+              if not first and benchmark in GROUP_BREAKS:
+                  lines.append("| | | | | | |")
+
+              first = False
+
               lines.append("| " + " | ".join(map(str, row)) + " |")
 
           output = "\n".join(lines)

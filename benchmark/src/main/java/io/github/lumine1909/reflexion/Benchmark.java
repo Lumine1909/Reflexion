@@ -29,43 +29,43 @@ public class Benchmark {
 
     private static final A OBJECT = new A();
 
-    private static Method reflectCall;
-    private static final Method REFLECT_CALL;
+    private static Method reflect$call;
+    private static final Method final$reflect$call;
 
-    private static Field reflectValue;
-    private static final Field REFLECT_VALUE;
+    private static Field reflect$value;
+    private static final Field final$reflect$value;
 
-    private static MethodHandle mhCall;
-    private static final MethodHandle MH_CALL;
+    private static MethodHandle mh$call;
+    private static final MethodHandle final$mh$call;
 
-    private static VarHandle vhValue;
-    private static final VarHandle VH_VALUE;
+    private static VarHandle vh$value;
+    private static final VarHandle final$vh$value;
 
-    private static io.github.lumine1909.reflexion.Field<String> customValue =
+    private static io.github.lumine1909.reflexion.Field<String> custom$value =
         io.github.lumine1909.reflexion.Field.of(A.class, "value");
-    private static final io.github.lumine1909.reflexion.Field<String> CUSTOM_VALUE =
+    private static final io.github.lumine1909.reflexion.Field<String> final$custom$value =
         io.github.lumine1909.reflexion.Field.of(A.class, "value");
 
-    private static io.github.lumine1909.reflexion.Method<String> customCall =
+    private static io.github.lumine1909.reflexion.Method<String> custom$call =
         io.github.lumine1909.reflexion.Method.of(A.class, "call", String.class, int.class);
-    private static final io.github.lumine1909.reflexion.Method<String> CUSTOM_CALL =
+    private static final io.github.lumine1909.reflexion.Method<String> final$custom$call =
         io.github.lumine1909.reflexion.Method.of(A.class, "call", String.class, int.class);
 
     static {
         try {
-            reflectCall = A.class.getDeclaredMethod("call", int.class);
-            reflectCall.setAccessible(true);
-            REFLECT_CALL = reflectCall;
+            reflect$call = A.class.getDeclaredMethod("call", int.class);
+            reflect$call.setAccessible(true);
+            final$reflect$call = reflect$call;
 
-            reflectValue = A.class.getDeclaredField("value");
-            reflectValue.setAccessible(true);
-            REFLECT_VALUE = reflectValue;
+            reflect$value = A.class.getDeclaredField("value");
+            reflect$value.setAccessible(true);
+            final$reflect$value = reflect$value;
 
-            mhCall = IMPL_LOOKUP.unreflect(reflectCall);
-            MH_CALL = mhCall;
+            mh$call = IMPL_LOOKUP.unreflect(reflect$call);
+            final$mh$call = mh$call;
 
-            vhValue = IMPL_LOOKUP.unreflectVarHandle(reflectValue);
-            VH_VALUE = vhValue;
+            vh$value = IMPL_LOOKUP.unreflectVarHandle(reflect$value);
+            final$vh$value = vh$value;
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -117,52 +117,52 @@ public class Benchmark {
 
     @org.openjdk.jmh.annotations.Benchmark
     public String customAccess() {
-        return customValue.get(OBJECT);
+        return custom$value.get(OBJECT);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String customAccessFast() {
-        return customValue.getFast(OBJECT);
+        return custom$value.getFast(OBJECT);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String customAccessSF() {
-        return CUSTOM_VALUE.get(OBJECT);
+        return final$custom$value.get(OBJECT);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String customAccessFastSF() {
-        return CUSTOM_VALUE.getFast(OBJECT);
+        return final$custom$value.getFast(OBJECT);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public void customMutate() {
-        customValue.set(OBJECT, "42");
+        custom$value.set(OBJECT, "42");
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public void customMutateFast() {
-        customValue.setFast(OBJECT, "42");
+        custom$value.setFast(OBJECT, "42");
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public void customMutateSF() {
-        CUSTOM_VALUE.set(OBJECT, "42");
+        final$custom$value.set(OBJECT, "42");
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public void customMutateFastSF() {
-        CUSTOM_VALUE.setFast(OBJECT, "42");
+        final$custom$value.setFast(OBJECT, "42");
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String customCall() {
-        return customCall.invoke(OBJECT, 42);
+        return custom$call.invoke(OBJECT, 42);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String customCallSF() {
-        return CUSTOM_CALL.invoke(OBJECT, 42);
+        return final$custom$call.invoke(OBJECT, 42);
     }
 
     // ---------------------------------------------------------------------
@@ -171,32 +171,32 @@ public class Benchmark {
 
     @org.openjdk.jmh.annotations.Benchmark
     public String vhAccess() {
-        return (String) vhValue.get(OBJECT);
+        return (String) vh$value.get(OBJECT);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String vhAccessSF() {
-        return (String) VH_VALUE.get(OBJECT);
+        return (String) final$vh$value.get(OBJECT);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public void vhMutate() {
-        vhValue.set(OBJECT, "42");
+        vh$value.set(OBJECT, "42");
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public void vhMutateSF() {
-        VH_VALUE.set(OBJECT, "42");
+        final$vh$value.set(OBJECT, "42");
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String mhCall() throws Throwable {
-        return (String) mhCall.invokeExact(OBJECT, 42);
+        return (String) mh$call.invokeExact(OBJECT, 42);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String mhCallSF() throws Throwable {
-        return (String) MH_CALL.invokeExact(OBJECT, 42);
+        return (String) final$mh$call.invokeExact(OBJECT, 42);
     }
 
     // ---------------------------------------------------------------------
@@ -205,31 +205,31 @@ public class Benchmark {
 
     @org.openjdk.jmh.annotations.Benchmark
     public String reflectAccess() throws ReflectiveOperationException {
-        return (String) reflectValue.get(OBJECT);
+        return (String) reflect$value.get(OBJECT);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String reflectAccessSF() throws ReflectiveOperationException {
-        return (String) REFLECT_VALUE.get(OBJECT);
+        return (String) final$reflect$value.get(OBJECT);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public void reflectMutate() throws ReflectiveOperationException {
-        reflectValue.set(OBJECT, "42");
+        reflect$value.set(OBJECT, "42");
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public void reflectMutateSF() throws ReflectiveOperationException {
-        REFLECT_VALUE.set(OBJECT, "42");
+        final$reflect$value.set(OBJECT, "42");
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String reflectCall() throws ReflectiveOperationException {
-        return (String) reflectCall.invoke(OBJECT, 42);
+        return (String) reflect$call.invoke(OBJECT, 42);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public String reflectCallSF() throws ReflectiveOperationException {
-        return (String) REFLECT_CALL.invoke(OBJECT, 42);
+        return (String) final$reflect$call.invoke(OBJECT, 42);
     }
 }
