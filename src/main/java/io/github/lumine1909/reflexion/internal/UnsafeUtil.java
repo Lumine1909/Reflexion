@@ -10,7 +10,7 @@ import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-@SuppressWarnings({"deprecation", "DataFlowIssue"})
+@SuppressWarnings({"DataFlowIssue", "deprecation", "removal"})
 public final class UnsafeUtil {
 
     public static final Unsafe UNSAFE = null;

@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UnsafeTest {
 
-    @SuppressWarnings({"deprecation", "DataFlowIssue"})
+    @SuppressWarnings({"DataFlowIssue", "deprecation", "removal"})
     @Test
     public void testMissingUnsafe() throws Throwable {
         Unsafe unsafe = UnsafeUtil.UNSAFE;
