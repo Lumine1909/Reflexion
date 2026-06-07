@@ -11,9 +11,10 @@ dependencies {
 }
 ```
 
-Performance: almost same as `MethodHandle`/`VarHandle` with `static final` modifier, much faster than them without it.
-
+Performance: almost the same as `MethodHandle`/`VarHandle` when stored in stable fields, especially `static final`. Compared with non-final raw `MethodHandle`/`VarHandle` fields, Reflexion can be significantly faster.
 Benchmark:
+
+The main performance trick is creating a stable concrete call site around MethodHandle/VarHandle, so the JIT can inline through the wrapper and recover the underlying target.
 
 | Benchmark                    | Mode | Cnt | Score | Error  | Units |
 |------------------------------|------|-----|-------|--------|-------|

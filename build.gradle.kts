@@ -64,3 +64,7 @@ mavenPublishing {
     publishToMavenCentral(true)
     signAllPublications()
 }
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
