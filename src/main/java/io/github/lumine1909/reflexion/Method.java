@@ -7,8 +7,7 @@ import java.lang.invoke.MethodHandle;
 import java.util.function.Supplier;
 
 /**
- * A high-performance wrapper around {@link java.lang.reflect.Method} or {@link java.lang.reflect.Constructor}
- * backed by {@link MethodHandle}.
+ * A high-performance wrapper around {@link java.lang.reflect.Method} or {@link java.lang.reflect.Constructor} backed by {@link MethodHandle}.
  *
  * <p>This abstraction provides:
  * <ul>
@@ -60,8 +59,7 @@ public final class Method<T> {
     }
 
     /**
-     * Looks up a method by name, return type, and parameter types
-     * from given class.
+     * Looks up a method by name, return type, and parameter types from given class.
      *
      * @param clazz      declaring class
      * @param name       method name
@@ -76,8 +74,7 @@ public final class Method<T> {
     }
 
     /**
-     * Looks up a method by name, return type, and parameter types
-     * from given class name.
+     * Looks up a method by name, return type, and parameter types from given class name.
      *
      * @param className  fully-qualified class name
      * @param name       method name
@@ -91,8 +88,7 @@ public final class Method<T> {
     }
 
     /**
-     * Looks up a method by name, return type, and parameter types
-     * from the given class name.
+     * Looks up a method by name, return type, and parameter types from the given class name.
      *
      * @param className  fully-qualified class name
      * @param name       method name
@@ -135,33 +131,33 @@ public final class Method<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private T invoke0(MethodHandle methodHandle, Object... args) throws Throwable {
+    private T invoke0(MethodHandle handle, Object... args) throws Throwable {
         return (T) switch (paramCount) {
-            case 0 -> methodHandle.invokeExact();
-            case 1 -> methodHandle.invokeExact(args[0]);
-            case 2 -> methodHandle.invokeExact(args[0], args[1]);
-            case 3 -> methodHandle.invokeExact(args[0], args[1], args[2]);
-            case 4 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3]);
-            case 5 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3], args[4]);
-            case 6 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5]);
-            case 7 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-            case 8 -> methodHandle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+            case 0 -> handle.invokeExact();
+            case 1 -> handle.invokeExact(args[0]);
+            case 2 -> handle.invokeExact(args[0], args[1]);
+            case 3 -> handle.invokeExact(args[0], args[1], args[2]);
+            case 4 -> handle.invokeExact(args[0], args[1], args[2], args[3]);
+            case 5 -> handle.invokeExact(args[0], args[1], args[2], args[3], args[4]);
+            case 6 -> handle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5]);
+            case 7 -> handle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+            case 8 -> handle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
             default -> spreader.invokeExact(args);
         };
     }
 
     @SuppressWarnings("unchecked")
-    private T invoke0(MethodHandle methodHandle, Object instance, Object... args) throws Throwable {
+    private T invoke0(MethodHandle handle, Object instance, Object... args) throws Throwable {
         return (T) switch (paramCount) {
-            case 0 -> methodHandle.invokeExact(instance);
-            case 1 -> methodHandle.invokeExact(instance, args[0]);
-            case 2 -> methodHandle.invokeExact(instance, args[0], args[1]);
-            case 3 -> methodHandle.invokeExact(instance, args[0], args[1], args[2]);
-            case 4 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3]);
-            case 5 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4]);
-            case 6 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5]);
-            case 7 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-            case 8 -> methodHandle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+            case 0 -> handle.invokeExact(instance);
+            case 1 -> handle.invokeExact(instance, args[0]);
+            case 2 -> handle.invokeExact(instance, args[0], args[1]);
+            case 3 -> handle.invokeExact(instance, args[0], args[1], args[2]);
+            case 4 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3]);
+            case 5 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4]);
+            case 6 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5]);
+            case 7 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+            case 8 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
             default -> spreader.invokeExact(instance, args);
         };
     }

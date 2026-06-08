@@ -5,7 +5,7 @@ import java.lang.reflect.Modifier;
 
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 
-@SuppressWarnings("DataFlowIssue")
+@SuppressWarnings({"DataFlowIssue", "deprecation", "removal"})
 public final class UnsafeField {
 
     private final int staticFlag;

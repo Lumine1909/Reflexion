@@ -16,8 +16,8 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 21
+          distribution: graalvm
+          java-version: 25
 
       - run: chmod +x ./gradlew
 

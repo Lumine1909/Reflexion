@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UnsafeTest {
 
-    @SuppressWarnings({"deprecation", "DataFlowIssue"})
+    @SuppressWarnings({"DataFlowIssue", "deprecation", "removal"})
     @Test
     public void testMissingUnsafe() throws Throwable {
         Unsafe unsafe = UnsafeUtil.UNSAFE;
@@ -20,7 +20,7 @@ public class UnsafeTest {
         unsafe.putObject(unsafe.staticFieldBase(f), unsafe.staticFieldOffset(f), null);
         assertNull(UnsafeUtil.UNSAFE);
 
-        UnsafeUtil.put(unsafe, null, null, null);
+        UnsafeUtil.init(unsafe, null, null, null);
         assertNotNull(UnsafeUtil.UNSAFE);
     }
 }
