@@ -8,8 +8,7 @@ import java.lang.invoke.VarHandle;
 import java.util.function.Supplier;
 
 /**
- * A high-performance wrapper around {@link java.lang.reflect.Field} that
- * provides unsafe and varhandle-based access.
+ * A high-performance wrapper around {@link java.lang.reflect.Field} that provides unsafe and varhandle-based access.
  *
  * <p>This abstraction supports:
  * <ul>

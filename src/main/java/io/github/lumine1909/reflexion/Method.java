@@ -7,8 +7,7 @@ import java.lang.invoke.MethodHandle;
 import java.util.function.Supplier;
 
 /**
- * A high-performance wrapper around {@link java.lang.reflect.Method} or {@link java.lang.reflect.Constructor}
- * backed by {@link MethodHandle}.
+ * A high-performance wrapper around {@link java.lang.reflect.Method} or {@link java.lang.reflect.Constructor} backed by {@link MethodHandle}.
  *
  * <p>This abstraction provides:
  * <ul>
@@ -60,8 +59,7 @@ public final class Method<T> {
     }
 
     /**
-     * Looks up a method by name, return type, and parameter types
-     * from given class.
+     * Looks up a method by name, return type, and parameter types from given class.
      *
      * @param clazz      declaring class
      * @param name       method name
@@ -76,8 +74,7 @@ public final class Method<T> {
     }
 
     /**
-     * Looks up a method by name, return type, and parameter types
-     * from given class name.
+     * Looks up a method by name, return type, and parameter types from given class name.
      *
      * @param className  fully-qualified class name
      * @param name       method name
@@ -91,8 +88,7 @@ public final class Method<T> {
     }
 
     /**
-     * Looks up a method by name, return type, and parameter types
-     * from the given class name.
+     * Looks up a method by name, return type, and parameter types from the given class name.
      *
      * @param className  fully-qualified class name
      * @param name       method name
