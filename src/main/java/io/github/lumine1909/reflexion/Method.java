@@ -29,6 +29,7 @@ public final class Method<T> {
     private final java.lang.reflect.Method javaMethod;
     private final int paramCount;
     private final int flag;
+    private final boolean noInstance;
     private final MethodHandle handle;
     private final MethodHandle spreader;
     private final Supplier<MethodHandle> inline;
@@ -37,6 +38,7 @@ public final class Method<T> {
         this.javaMethod = javaMethod;
         this.paramCount = paramCount;
         this.flag = flag;
+        this.noInstance = (flag & NO_INSTANCE) == NO_INSTANCE;
         this.handle = handle;
         this.spreader = spreader;
         this.inline = inline;
@@ -116,18 +118,61 @@ public final class Method<T> {
      */
     public T invoke(Object instance, Object... args) {
         try {
-            if (inline != null) {
-                return noInstance() ? invoke0(inline.get(), args) : invoke0(inline.get(), instance, args);
-            } else {
-                return noInstance() ? invoke0(handle, args) : invoke0(handle, instance, args);
-            }
+            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            return noInstance ? invoke0(handle, args) : invoke0(handle, instance, args);
         } catch (Throwable t) {
             throw new OperationException(t);
         }
     }
 
-    private boolean noInstance() {
-        return (flag & NO_INSTANCE) == NO_INSTANCE;
+    @SuppressWarnings("unchecked")
+    public T invoke(Object instance) {
+        try {
+            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            return (T) (noInstance ? handle.invokeExact() : handle.invokeExact(instance));
+        } catch (Throwable t) {
+            throw new OperationException(t);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public T invoke(Object instance, Object arg0) {
+        try {
+            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            return (T) (noInstance ? handle.invokeExact(arg0) : handle.invokeExact(instance, arg0));
+        } catch (Throwable t) {
+            throw new OperationException(t);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public T invoke(Object instance, Object arg0, Object arg1) {
+        try {
+            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            return (T) (noInstance ? handle.invokeExact(arg0, arg1) : handle.invokeExact(instance, arg0, arg1));
+        } catch (Throwable t) {
+            throw new OperationException(t);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public T invoke(Object instance, Object arg0, Object arg1, Object arg2) {
+        try {
+            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            return (T) (noInstance ? handle.invokeExact(arg0, arg1, arg2) : handle.invokeExact(instance, arg0, arg1, arg2));
+        } catch (Throwable t) {
+            throw new OperationException(t);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public T invoke(Object instance, Object arg0, Object arg1, Object arg2, Object arg3) {
+        try {
+            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            return (T) (noInstance ? handle.invokeExact(arg0, arg1, arg2, arg3) : handle.invokeExact(instance, arg0, arg1, arg2, arg3));
+        } catch (Throwable t) {
+            throw new OperationException(t);
+        }
     }
 
     @SuppressWarnings("unchecked")
