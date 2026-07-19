@@ -4,6 +4,7 @@ import io.github.lumine1909.reflexion.exception.NotFoundException;
 import io.github.lumine1909.reflexion.exception.OperationException;
 import io.github.lumine1909.reflexion.internal.MethodHolder;
 import io.github.lumine1909.reflexion.internal.UnsafeField;
+import io.github.lumine1909.reflexion.internal.UnsafeUtil;
 import io.github.lumine1909.reflexion.internal.VarHolder;
 
 import java.lang.invoke.MethodHandle;
@@ -131,6 +132,7 @@ public final class Class<T> {
      */
     public <S> Field<S> getField(String name, int flag) {
         try {
+            UnsafeUtil.clearReflectionFilter();
             java.lang.reflect.Field field = javaClass.getDeclaredField(name);
             VarHandle vh = IMPL_LOOKUP.unreflectVarHandle(field);
             boolean isStatic = Modifier.isStatic(field.getModifiers());
@@ -138,7 +140,7 @@ public final class Class<T> {
         } catch (Throwable ignored) {
         }
         try {
-            // Internal fields
+            // Internal fields, this should never happen
             return new Field<>(null, -1, new UnsafeField(javaClass, name), null, null);
         } catch (Throwable ignored) {
         }
