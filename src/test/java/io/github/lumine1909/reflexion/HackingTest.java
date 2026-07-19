@@ -7,7 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.INTERNAL_UNSAFE;
+import static io.github.lumine1909.reflexion.internal.UnsafeUtil.clearReflectionFilter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HackingTest {
 
@@ -27,6 +29,17 @@ public class HackingTest {
         assertEquals("testString", str);
         field$value.set(str, "hackedString".getBytes(StandardCharsets.UTF_8));
         assertEquals("hackedString", str);
+    }
+
+    @SuppressWarnings("removal")
+    @Test
+    public void testHackInternalFields() {
+        Field<Integer> field$security = Field.of(System.class, "security");
+        field$security.setObject(null, new SecurityManager());
+        assertNotNull(field$security.getObject(null));
+
+        Field<ClassLoader> field$classLoader = Field.of(java.lang.Class.class, "classLoader");
+        assertNotNull(field$classLoader.getObject(A.class));
     }
 
     @Test
