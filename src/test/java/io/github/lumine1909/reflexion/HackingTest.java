@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.INTERNAL_UNSAFE;
-import static io.github.lumine1909.reflexion.internal.UnsafeUtil.clearReflectionFilter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -34,9 +33,8 @@ public class HackingTest {
     @SuppressWarnings("removal")
     @Test
     public void testHackInternalFields() {
-        Field<Integer> field$security = Field.of(System.class, "security");
-        field$security.setObject(null, new SecurityManager());
-        assertNotNull(field$security.getObject(null));
+        Field<?> field$fieldFilterMap = Field.of("jdk.internal.reflect.Reflection", "fieldFilterMap");
+        assertNotNull(field$fieldFilterMap.getObject(A.class));
 
         Field<ClassLoader> field$classLoader = Field.of(java.lang.Class.class, "classLoader");
         assertNotNull(field$classLoader.getObject(A.class));

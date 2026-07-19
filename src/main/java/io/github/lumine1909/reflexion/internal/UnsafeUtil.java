@@ -23,6 +23,10 @@ public final class UnsafeUtil {
     private static final MethodHandle mh$staticFieldBase = null;
     private static final MethodHandle mh$staticFieldOffset = null;
 
+    private static final java.lang.Class<?> class$Reflection = null;
+    private static final VarHandle vh$fieldFilterMap = null;
+    private static final VarHandle vh$methodFilterMap = null;
+
     static {
         try {
             Field field$unsafe = Unsafe.class.getDeclaredField("theUnsafe");
@@ -76,20 +80,33 @@ public final class UnsafeUtil {
             }
             if (mh$objectFieldOffset == null) {
                 MethodHandle objectFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "objectFieldOffset", MethodType.methodType(long.class, Field.class));
-                UNSAFE.putObject(UnsafeUtil.class, fieldOffset(UnsafeUtil.class, "mh$objectFieldOffset"), objectFieldOffset);
+                UNSAFE.putObject(UnsafeUtil.class, staticFieldOffset(UnsafeUtil.class.getDeclaredField("mh$objectFieldOffset")), objectFieldOffset);
             }
             if (mh$staticFieldBase == null) {
                 MethodHandle staticFieldBase = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldBase", MethodType.methodType(Object.class, Field.class));
-                UNSAFE.putObject(UnsafeUtil.class, fieldOffset(UnsafeUtil.class, "mh$staticFieldBase"), staticFieldBase);
+                UNSAFE.putObject(UnsafeUtil.class, staticFieldOffset(UnsafeUtil.class.getDeclaredField("mh$staticFieldBase")), staticFieldBase);
             }
             if (mh$staticFieldOffset == null) {
                 MethodHandle staticFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldOffset", MethodType.methodType(long.class, Field.class));
-                UNSAFE.putObject(UnsafeUtil.class, fieldOffset(UnsafeUtil.class, "mh$staticFieldOffset"), staticFieldOffset);
+                UNSAFE.putObject(UnsafeUtil.class, staticFieldOffset(UnsafeUtil.class.getDeclaredField("mh$staticFieldOffset")), staticFieldOffset);
+            }
+            if (class$Reflection == null) {
+                Class<?> class$Reflection = Class.forName("jdk.internal.reflect.Reflection");
+                putStatic(UnsafeUtil.class, "class$Reflection", class$Reflection);
+            }
+            if (vh$fieldFilterMap == null) {
+                VarHandle vh$fieldFilterMap = IMPL_LOOKUP.findStaticVarHandle(class$Reflection, "fieldFilterMap", Map.class);
+                putStatic(UnsafeUtil.class, "vh$fieldFilterMap", vh$fieldFilterMap);
+            }
+            if (vh$methodFilterMap == null) {
+                VarHandle vh$methodFilterMap = IMPL_LOOKUP.findStaticVarHandle(class$Reflection, "methodFilterMap", Map.class);
+                putStatic(UnsafeUtil.class, "vh$methodFilterMap", vh$methodFilterMap);
             }
         } catch (Throwable t) {
             throw new OperationException(t);
         }
     }
+
 
     public static long objectFieldOffset(Field field) {
         try {
@@ -137,14 +154,15 @@ public final class UnsafeUtil {
 
     public static void clearReflectionFilter() {
         try {
-            Class<?> class$Reflection = Class.forName("jdk.internal.reflect.Reflection");
-            VarHandle vh$fieldFilterMap = IMPL_LOOKUP.findStaticVarHandle(class$Reflection, "fieldFilterMap", Map.class);
             vh$fieldFilterMap.set(Map.of());
-            VarHandle vh$methodFilterMap = IMPL_LOOKUP.findStaticVarHandle(class$Reflection, "methodFilterMap", Map.class);
             vh$methodFilterMap.set(Map.of());
         } catch (Throwable t) {
             throw new OperationException(t);
         }
+    }
+
+    public static void putStatic(Class<?> clazz, String name, Object value) throws NoSuchFieldException {
+        UNSAFE.putObject(clazz, staticFieldOffset(clazz.getDeclaredField(name)), value);
     }
 
     public static void putObject(Class<?> clazz, String name, Object value) {
