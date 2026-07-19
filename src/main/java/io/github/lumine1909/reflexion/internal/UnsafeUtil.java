@@ -76,15 +76,15 @@ public final class UnsafeUtil {
             }
             if (mh$objectFieldOffset == null) {
                 MethodHandle objectFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "objectFieldOffset", MethodType.methodType(long.class, Field.class));
-                UNSAFE.putObject(UnsafeUtil.class, fieldOffset(UnsafeUtil.class, "mh$objectFieldOffset"), objectFieldOffset);
+                UNSAFE.putObject(UnsafeUtil.class, staticFieldOffset(UnsafeUtil.class.getDeclaredField("mh$objectFieldOffset")), objectFieldOffset);
             }
             if (mh$staticFieldBase == null) {
                 MethodHandle staticFieldBase = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldBase", MethodType.methodType(Object.class, Field.class));
-                UNSAFE.putObject(UnsafeUtil.class, fieldOffset(UnsafeUtil.class, "mh$staticFieldBase"), staticFieldBase);
+                UNSAFE.putObject(UnsafeUtil.class, staticFieldOffset(UnsafeUtil.class.getDeclaredField("mh$staticFieldBase")), staticFieldBase);
             }
             if (mh$staticFieldOffset == null) {
                 MethodHandle staticFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "staticFieldOffset", MethodType.methodType(long.class, Field.class));
-                UNSAFE.putObject(UnsafeUtil.class, fieldOffset(UnsafeUtil.class, "mh$staticFieldOffset"), staticFieldOffset);
+                UNSAFE.putObject(UnsafeUtil.class, staticFieldOffset(UnsafeUtil.class.getDeclaredField("mh$staticFieldOffset")), staticFieldOffset);
             }
         } catch (Throwable t) {
             throw new OperationException(t);
@@ -145,6 +145,10 @@ public final class UnsafeUtil {
         } catch (Throwable t) {
             throw new OperationException(t);
         }
+    }
+
+    public static void putStatic(Class<?> clazz, String name, Object value) throws NoSuchFieldException {
+        UNSAFE.putObject(clazz, staticFieldOffset(clazz.getDeclaredField(name)), value);
     }
 
     public static void putObject(Class<?> clazz, String name, Object value) {

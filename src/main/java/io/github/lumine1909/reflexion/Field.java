@@ -138,7 +138,7 @@ public final class Field<T> {
         try {
             if (inline != null) {
                 VarHandle vh = inline.get();
-                return instance == null ? (T) vh.get() : (T) vh.get(instance);
+                return (T) (instance == null ? vh.get() : vh.get(instance));
             } else {
                 return get(instance);
             }
@@ -170,7 +170,7 @@ public final class Field<T> {
         try {
             if (inline != null) {
                 VarHandle vh = inline.get();
-                return instance == null ? (S) vh.get() : (S) vh.get(instance);
+                return (S) (instance == null ? vh.get() : vh.get(instance));
             } else {
                 return getUntyped(instance);
             }
