@@ -2,6 +2,7 @@ package io.github.lumine1909.reflexion;
 
 import io.github.lumine1909.reflexion.exception.OperationException;
 import io.github.lumine1909.reflexion.internal.UnsafeField;
+import io.github.lumine1909.reflexion.internal.VarHolder;
 
 import java.lang.Class;
 import java.lang.invoke.VarHandle;
@@ -30,12 +31,12 @@ public final class Field<T> {
     private final VarHandle handle;
     private final Supplier<VarHandle> inline;
 
-    public Field(java.lang.reflect.Field javaField, int staticFlag, UnsafeField unsafe, VarHandle handle, Supplier<VarHandle> inline) {
+    public Field(java.lang.reflect.Field javaField, int staticFlag, UnsafeField unsafe, VarHandle handle) {
         this.javaField = javaField;
         this.staticFlag = staticFlag;
         this.unsafe = unsafe;
         this.handle = handle;
-        this.inline = inline;
+        this.inline = VarHolder.inline(handle);
     }
 
     /**

@@ -162,7 +162,14 @@ public final class UnsafeUtil {
     }
 
     public static void putStatic(Class<?> clazz, String name, Object value) throws NoSuchFieldException {
-        UNSAFE.putObject(clazz, staticFieldOffset(clazz.getDeclaredField(name)), value);
+        long offset;
+        try {
+            offset = fieldOffset(clazz, name);
+        } catch (OperationException e) {
+            // Java 26 will fall back to here
+            offset = staticFieldOffset(clazz.getDeclaredField(name));
+        }
+        UNSAFE.putObject(clazz, offset, value);
     }
 
     public static void putObject(Class<?> clazz, String name, Object value) {
