@@ -13,11 +13,24 @@ public class A {
 
     }
 
-    private static int test() {
+    private void test0() {
+    }
+
+    private static int testStatic0() {
         return 42;
     }
 
-    public static void testStatic(int arg1, int arg2, int arg3, int arg4, int arg5, Object arg6) {
+    private int test4(int arg0, int arg1, int arg2, Object arg3) {
+        return 42;
+    }
+
+    private static void testStatic4(int arg0, int arg1, int arg2, Object arg3) {
+    }
+
+    public void test5(int arg0, int arg1, int arg2, int arg3, Object arg4) {
+    }
+
+    public static void testStatic5(int arg0, int arg1, int arg2, int arg3, Object arg4) {
     }
 
     private String getStr() {
@@ -26,9 +39,6 @@ public class A {
 
     private void setStr(String str) {
         this.str = str;
-    }
-
-    public void test(int arg1, int arg2, int arg3, int arg4, int arg5, Object arg6) {
     }
 
     @Override
