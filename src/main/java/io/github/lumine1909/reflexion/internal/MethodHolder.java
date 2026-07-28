@@ -13,9 +13,12 @@ public final class MethodHolder {
     private static final AtomicInteger ID = new AtomicInteger();
 
     public static Supplier<MethodHandle> inline(MethodHandle handle) {
+        if (handle == null) {
+            return null;
+        }
         int index = ID.getAndIncrement();
         try {
-            UnsafeUtil.putObject(MethodHolder.class, "o" + index, handle);
+            UnsafeUtil.putStatic(MethodHolder.class, "o" + index, handle);
             return OBJ[index];
         } catch (Throwable t) {
             return null;

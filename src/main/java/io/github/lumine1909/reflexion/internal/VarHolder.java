@@ -13,9 +13,12 @@ public final class VarHolder {
     private static final AtomicInteger ID = new AtomicInteger();
 
     public static Supplier<VarHandle> inline(VarHandle handle) {
+        if (handle == null) {
+            return null;
+        }
         int index = ID.getAndIncrement();
         try {
-            UnsafeUtil.putObject(VarHolder.class, "o" + index, handle);
+            UnsafeUtil.putStatic(VarHolder.class, "o" + index, handle);
             return OBJ[index];
         } catch (Throwable t) {
             return null;

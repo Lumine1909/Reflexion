@@ -2,9 +2,8 @@ package io.github.lumine1909.reflexion;
 
 import io.github.lumine1909.reflexion.exception.NotFoundException;
 import io.github.lumine1909.reflexion.exception.OperationException;
-import io.github.lumine1909.reflexion.internal.MethodHolder;
 import io.github.lumine1909.reflexion.internal.UnsafeField;
-import io.github.lumine1909.reflexion.internal.VarHolder;
+import io.github.lumine1909.reflexion.internal.UnsafeUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
@@ -36,7 +35,7 @@ import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 public final class Class<T> {
 
     public static final int NULLABLE = 1;
-    public static final int SPECIAL = 2;
+    public static final int EXACT = 2;
 
     private final java.lang.Class<T> javaClass;
 
@@ -103,12 +102,6 @@ public final class Class<T> {
         return new Class<>(clazz);
     }
 
-    private static MethodHandle spreader(MethodHandle methodHandle, boolean noInstance) {
-        return noInstance
-            ? methodHandle.asSpreader(Object[].class, methodHandle.type().parameterCount())
-            : methodHandle.asSpreader(Object[].class, methodHandle.type().parameterCount() - 1);
-    }
-
     /**
      * Looks up a declared field by name.
      *
@@ -131,15 +124,16 @@ public final class Class<T> {
      */
     public <S> Field<S> getField(String name, int flag) {
         try {
+            UnsafeUtil.clearReflectionFilter();
             java.lang.reflect.Field field = javaClass.getDeclaredField(name);
             VarHandle vh = IMPL_LOOKUP.unreflectVarHandle(field);
             boolean isStatic = Modifier.isStatic(field.getModifiers());
-            return new Field<>(field, isStatic ? 1 : 0, new UnsafeField(field), vh, VarHolder.inline(vh));
+            return new Field<>(field, isStatic ? 1 : 0, new UnsafeField(field), vh);
         } catch (Throwable ignored) {
         }
         try {
-            // Internal fields
-            return new Field<>(null, -1, new UnsafeField(javaClass, name), null, null);
+            // Internal fields, this should never happen
+            return new Field<>(null, -1, new UnsafeField(javaClass, name), null);
         } catch (Throwable ignored) {
         }
 
@@ -208,12 +202,12 @@ public final class Class<T> {
      * @throws NotFoundException if no matching method is found
      */
     public <S> Method<S> getMethod(String name, int flag, java.lang.Class<S> returnType, java.lang.Class<?>... paramTypes) {
-        if ((flag & SPECIAL) == SPECIAL) {
+        if ((flag & EXACT) == EXACT) {
             try {
                 MethodHandle handle = IMPL_LOOKUP
                     .findSpecial(javaClass, name, MethodType.methodType(returnType, paramTypes), javaClass)
                     .asType(MethodType.genericMethodType(paramTypes.length + 1));
-                return new Method<>(null, paramTypes.length, 0, handle, spreader(handle, false), MethodHolder.inline(handle));
+                return new Method<>(null, paramTypes.length, 0, handle);
             } catch (Throwable ignored) {
             }
         }
@@ -223,21 +217,21 @@ public final class Class<T> {
             if (!returnType.isAssignableFrom(method.getReturnType())) {
                 throw new OperationException(null);
             }
-            return new Method<>(method, paramTypes.length, Modifier.isStatic(method.getModifiers()) ? 3 : 0, handle, spreader(handle, Modifier.isStatic(method.getModifiers())), MethodHolder.inline(handle));
+            return new Method<>(method, paramTypes.length, Modifier.isStatic(method.getModifiers()) ? 3 : 0, handle);
         } catch (Throwable ignored) {
         }
         try {
             MethodHandle handle = IMPL_LOOKUP
                 .findVirtual(javaClass, name, MethodType.methodType(returnType, paramTypes))
                 .asType(MethodType.genericMethodType(paramTypes.length + 1));
-            return new Method<>(null, paramTypes.length, 0, handle, spreader(handle, false), MethodHolder.inline(handle));
+            return new Method<>(null, paramTypes.length, 0, handle);
         } catch (Throwable ignored) {
         }
         try {
             MethodHandle handle = IMPL_LOOKUP
                 .findStatic(javaClass, name, MethodType.methodType(returnType, paramTypes))
                 .asType(MethodType.genericMethodType(paramTypes.length));
-            return new Method<>(null, paramTypes.length, 3, handle, spreader(handle, true), MethodHolder.inline(handle));
+            return new Method<>(null, paramTypes.length, 3, handle);
         } catch (Throwable ignored) {
         }
         if (name.equals("<init>")) {
@@ -245,7 +239,7 @@ public final class Class<T> {
                 MethodHandle handle = IMPL_LOOKUP
                     .findConstructor(javaClass, MethodType.methodType(void.class, paramTypes))
                     .asType(MethodType.genericMethodType(paramTypes.length));
-                return new Method<>(null, paramTypes.length, 2, handle, spreader(handle, true), MethodHolder.inline(handle));
+                return new Method<>(null, paramTypes.length, 2, handle);
             } catch (Throwable ignored) {
             }
         }

@@ -1,6 +1,7 @@
 package io.github.lumine1909.reflexion;
 
 import io.github.lumine1909.reflexion.exception.OperationException;
+import io.github.lumine1909.reflexion.internal.MethodHolder;
 
 import java.lang.Class;
 import java.lang.invoke.MethodHandle;
@@ -31,17 +32,17 @@ public final class Method<T> {
     private final int flag;
     private final boolean noInstance;
     private final MethodHandle handle;
-    private final MethodHandle spreader;
+    private final MethodHandle invoker;
     private final Supplier<MethodHandle> inline;
 
-    public Method(java.lang.reflect.Method javaMethod, int paramCount, int flag, MethodHandle handle, MethodHandle spreader, Supplier<MethodHandle> inline) {
+    public Method(java.lang.reflect.Method javaMethod, int paramCount, int flag, MethodHandle handle) {
         this.javaMethod = javaMethod;
         this.paramCount = paramCount;
         this.flag = flag;
         this.noInstance = (flag & NO_INSTANCE) == NO_INSTANCE;
         this.handle = handle;
-        this.spreader = spreader;
-        this.inline = inline;
+        this.invoker = paramCount <= 4 ? handle : spreader(handle, noInstance);
+        this.inline = MethodHolder.inline(invoker);
     }
 
     /**
@@ -105,6 +106,12 @@ public final class Method<T> {
         return clazz == null ? null : clazz.getMethod(name, flag, returnType, paramTypes);
     }
 
+    private static MethodHandle spreader(MethodHandle methodHandle, boolean noInstance) {
+        return noInstance
+            ? methodHandle.asSpreader(Object[].class, methodHandle.type().parameterCount())
+            : methodHandle.asSpreader(Object[].class, methodHandle.type().parameterCount() - 1);
+    }
+
     /**
      * Invokes the underlying method.
      *
@@ -116,10 +123,11 @@ public final class Method<T> {
      * @return invocation result
      * @throws OperationException if invocation fails
      */
+    @SuppressWarnings("unchecked")
     public T invoke(Object instance, Object... args) {
         try {
-            MethodHandle handle = inline != null ? inline.get() : this.handle;
-            return noInstance ? invoke0(handle, args) : invoke0(handle, instance, args);
+            MethodHandle handle = inline != null ? inline.get() : this.invoker;
+            return (T) (noInstance ? handle.invokeExact(args) : handle.invokeExact(instance, args));
         } catch (Throwable t) {
             throw new OperationException(t);
         }
@@ -128,7 +136,7 @@ public final class Method<T> {
     @SuppressWarnings("unchecked")
     public T invoke(Object instance) {
         try {
-            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            MethodHandle handle = inline != null ? inline.get() : this.invoker;
             return (T) (noInstance ? handle.invokeExact() : handle.invokeExact(instance));
         } catch (Throwable t) {
             throw new OperationException(t);
@@ -138,7 +146,7 @@ public final class Method<T> {
     @SuppressWarnings("unchecked")
     public T invoke(Object instance, Object arg0) {
         try {
-            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            MethodHandle handle = inline != null ? inline.get() : this.invoker;
             return (T) (noInstance ? handle.invokeExact(arg0) : handle.invokeExact(instance, arg0));
         } catch (Throwable t) {
             throw new OperationException(t);
@@ -148,7 +156,7 @@ public final class Method<T> {
     @SuppressWarnings("unchecked")
     public T invoke(Object instance, Object arg0, Object arg1) {
         try {
-            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            MethodHandle handle = inline != null ? inline.get() : this.invoker;
             return (T) (noInstance ? handle.invokeExact(arg0, arg1) : handle.invokeExact(instance, arg0, arg1));
         } catch (Throwable t) {
             throw new OperationException(t);
@@ -158,7 +166,7 @@ public final class Method<T> {
     @SuppressWarnings("unchecked")
     public T invoke(Object instance, Object arg0, Object arg1, Object arg2) {
         try {
-            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            MethodHandle handle = inline != null ? inline.get() : this.invoker;
             return (T) (noInstance ? handle.invokeExact(arg0, arg1, arg2) : handle.invokeExact(instance, arg0, arg1, arg2));
         } catch (Throwable t) {
             throw new OperationException(t);
@@ -168,43 +176,11 @@ public final class Method<T> {
     @SuppressWarnings("unchecked")
     public T invoke(Object instance, Object arg0, Object arg1, Object arg2, Object arg3) {
         try {
-            MethodHandle handle = inline != null ? inline.get() : this.handle;
+            MethodHandle handle = inline != null ? inline.get() : this.invoker;
             return (T) (noInstance ? handle.invokeExact(arg0, arg1, arg2, arg3) : handle.invokeExact(instance, arg0, arg1, arg2, arg3));
         } catch (Throwable t) {
             throw new OperationException(t);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private T invoke0(MethodHandle handle, Object... args) throws Throwable {
-        return (T) switch (paramCount) {
-            case 0 -> handle.invokeExact();
-            case 1 -> handle.invokeExact(args[0]);
-            case 2 -> handle.invokeExact(args[0], args[1]);
-            case 3 -> handle.invokeExact(args[0], args[1], args[2]);
-            case 4 -> handle.invokeExact(args[0], args[1], args[2], args[3]);
-            case 5 -> handle.invokeExact(args[0], args[1], args[2], args[3], args[4]);
-            case 6 -> handle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5]);
-            case 7 -> handle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-            case 8 -> handle.invokeExact(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
-            default -> spreader.invokeExact(args);
-        };
-    }
-
-    @SuppressWarnings("unchecked")
-    private T invoke0(MethodHandle handle, Object instance, Object... args) throws Throwable {
-        return (T) switch (paramCount) {
-            case 0 -> handle.invokeExact(instance);
-            case 1 -> handle.invokeExact(instance, args[0]);
-            case 2 -> handle.invokeExact(instance, args[0], args[1]);
-            case 3 -> handle.invokeExact(instance, args[0], args[1], args[2]);
-            case 4 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3]);
-            case 5 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4]);
-            case 6 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5]);
-            case 7 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-            case 8 -> handle.invokeExact(instance, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
-            default -> spreader.invokeExact(instance, args);
-        };
     }
 
     /**
