@@ -15,6 +15,8 @@ Performance: almost the same as `MethodHandle`/`VarHandle` when stored in stable
 
 The main performance trick is creating a stable concrete call site around MethodHandle/VarHandle, so the JIT can inline through the wrapper and recover the underlying target.
 
+You can check out the [related articles](https://lumine1909.github.io/categories/reflexion/) for more information.
+
 Benchmark:
 
 | Benchmark          | Mode | Cnt | Score  | Error  | Units |
