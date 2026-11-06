@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.lumine1909"
-version = "0.5.2"
+version = "0.6.0"
 
 repositories {
     mavenCentral()
@@ -28,6 +28,10 @@ tasks {
     withType<Javadoc> {
         isFailOnError = false
         options.encoding = "UTF-8"
+    }
+    named<JavaCompile>("compileTestJava") {
+        sourceCompatibility = "21"
+        targetCompatibility = "21"
     }
 }
 
@@ -66,4 +70,7 @@ mavenPublishing {
     signAllPublications()
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}

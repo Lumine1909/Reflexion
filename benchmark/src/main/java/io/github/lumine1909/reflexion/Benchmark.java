@@ -121,18 +121,8 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public String customAccessFast() {
-        return custom$value.getFast(OBJECT);
-    }
-
-    @org.openjdk.jmh.annotations.Benchmark
     public String customAccessSF() {
         return final$custom$value.get(OBJECT);
-    }
-
-    @org.openjdk.jmh.annotations.Benchmark
-    public String customAccessFastSF() {
-        return final$custom$value.getFast(OBJECT);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
@@ -141,18 +131,8 @@ public class Benchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void customMutateFast() {
-        custom$value.setFast(OBJECT, "42");
-    }
-
-    @org.openjdk.jmh.annotations.Benchmark
     public void customMutateSF() {
         final$custom$value.set(OBJECT, "42");
-    }
-
-    @org.openjdk.jmh.annotations.Benchmark
-    public void customMutateFastSF() {
-        final$custom$value.setFast(OBJECT, "42");
     }
 
     @org.openjdk.jmh.annotations.Benchmark

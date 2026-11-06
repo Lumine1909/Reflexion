@@ -18,16 +18,17 @@ public class FieldTest {
         assertEquals("42", fs.get(a));
         assertEquals("42", fs.getObject(a));
         fb.setByte(a, (byte) 41);
-        fb.setFast(a, (byte) 41);
+        fb.set(a, (byte) 41);
+        fi.set(null, 41);
         fi.set(null, 41);
         fs.set(a, "41");
-        fs.setFast(a, "41");
+        fs.set(a, "41");
         assertEquals((byte) 41, fb.get(a));
-        assertEquals((byte) 41, fb.getFast(a));
+        assertEquals((byte) 41, fb.get(a));
         assertEquals(41, fi.get(null));
-        assertEquals(41, fi.getFast(null));
+        assertEquals(41, fi.get(null));
         assertEquals("41", fs.get(a));
-        assertEquals("41", fs.getFast(a));
+        assertEquals("41", fs.get(a));
     }
 
     @Test
