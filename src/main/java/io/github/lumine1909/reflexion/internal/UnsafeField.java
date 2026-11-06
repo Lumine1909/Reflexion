@@ -73,31 +73,31 @@ public final class UnsafeField {
         switch (type) {
             case OBJECT:
                 UNSAFE.putObject(base, offset, value);
-                break;
+                return;
             case BYTE:
                 UNSAFE.putByte(base, offset, (byte) value);
-                break;
+                return;
             case INT:
                 UNSAFE.putInt(base, offset, (int) value);
-                break;
+                return;
             case SHORT:
                 UNSAFE.putShort(base, offset, (short) value);
-                break;
+                return;
             case LONG:
                 UNSAFE.putLong(base, offset, (long) value);
-                break;
+                return;
             case FLOAT:
                 UNSAFE.putFloat(base, offset, (float) value);
-                break;
+                return;
             case DOUBLE:
                 UNSAFE.putDouble(base, offset, (double) value);
-                break;
+                return;
             case CHAR:
                 UNSAFE.putChar(base, offset, (char) value);
-                break;
+                return;
             case BOOLEAN:
                 UNSAFE.putBoolean(base, offset, (boolean) value);
-                break;
+                return;
             case NULL:
                 throw new UnsupportedOperationException("Unknown type");
         }
