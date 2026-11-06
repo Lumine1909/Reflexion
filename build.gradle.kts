@@ -61,6 +61,7 @@ mavenPublishing {
         }
     }
 
+    signing.useGpgCmd()
     publishToMavenCentral(true)
     signAllPublications()
 }
