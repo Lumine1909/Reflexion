@@ -64,7 +64,6 @@ mavenPublishing {
             url.set("https://github.com/Lumine1909/Reflexion")
         }
     }
-
     signing.useGpgCmd()
     publishToMavenCentral(true)
     signAllPublications()
@@ -73,4 +72,5 @@ mavenPublishing {
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
     sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
