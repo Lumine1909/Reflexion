@@ -3,7 +3,6 @@ package io.github.lumine1909.reflexion;
 import io.github.lumine1909.reflexion.internal.UnsafeField;
 
 import java.lang.Class;
-import java.lang.invoke.MethodHandle;
 
 /**
  * A high-performance wrapper around {@link java.lang.reflect.Field} that provides unsafe and varhandle-based access.
@@ -24,15 +23,11 @@ public final class Field<T> {
     private final java.lang.reflect.Field javaField;
     private final UnsafeField unsafe;
     private final int staticFlag;
-    private final MethodHandle getter;
-    private final MethodHandle setter;
 
-    public Field(java.lang.reflect.Field javaField, int staticFlag, UnsafeField unsafe, MethodHandle getter, MethodHandle setter) {
+    public Field(java.lang.reflect.Field javaField, int staticFlag, UnsafeField unsafe) {
         this.javaField = javaField;
         this.staticFlag = staticFlag;
         this.unsafe = unsafe;
-        this.getter = getter;
-        this.setter = setter;
     }
 
     /**
@@ -92,24 +87,6 @@ public final class Field<T> {
      */
     public java.lang.reflect.Field javaField() {
         return javaField;
-    }
-
-    /**
-     * Returns wrapped Java getter {@link MethodHandle} object.
-     *
-     * @return wrapped Java field, nullable
-     */
-    public MethodHandle getter() {
-        return getter;
-    }
-
-    /**
-     * Returns wrapped Java setter {@link MethodHandle} object.
-     *
-     * @return wrapped Java field, nullable
-     */
-    public MethodHandle setter() {
-        return setter;
     }
 
     /**

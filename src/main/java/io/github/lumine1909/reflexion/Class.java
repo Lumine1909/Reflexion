@@ -125,14 +125,13 @@ public final class Class<T> {
         try {
             UnsafeUtil.clearReflectionFilter();
             java.lang.reflect.Field field = javaClass.getDeclaredField(name);
-      //      VarHandle vh = IMPL_LOOKUP.unreflectVarHandle(field);
             boolean isStatic = Modifier.isStatic(field.getModifiers());
-            return new Field<>(field, isStatic ? 1 : 0, new UnsafeField(field), null, null);
+            return new Field<>(field, isStatic ? 1 : 0, new UnsafeField(field));
         } catch (Throwable ignored) {
         }
         try {
             // Internal fields, this should never happen
-            return new Field<>(null, -1, new UnsafeField(javaClass, name), null, null);
+            return new Field<>(null, -1, new UnsafeField(javaClass, name));
         } catch (Throwable ignored) {
         }
 
