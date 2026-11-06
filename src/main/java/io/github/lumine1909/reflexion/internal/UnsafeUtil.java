@@ -2,6 +2,7 @@ package io.github.lumine1909.reflexion.internal;
 
 import io.github.lumine1909.reflexion.exception.OperationException;
 import sun.misc.Unsafe;
+import sun.reflect.ReflectionFactory;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -32,6 +33,18 @@ public final class UnsafeUtil {
             Field field$unsafe = Unsafe.class.getDeclaredField("theUnsafe");
             field$unsafe.setAccessible(true);
             Unsafe unsafe = (Unsafe) field$unsafe.get(null);
+
+            try {
+                MethodHandles.Lookup implLookup = (MethodHandles.Lookup) ReflectionFactory.getReflectionFactory().newConstructorForSerialization(
+                    MethodHandles.Lookup.class, MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, Class.class, int.class)
+                ).newInstance(Object.class, null, -1);
+                Class<?> class$MemoryAccessOption = Class.forName("sun.misc.Unsafe$MemoryAccessOption");
+                implLookup.findStaticSetter(Unsafe.class, "MEMORY_ACCESS_OPTION", class$MemoryAccessOption).invoke(
+                    implLookup.findStaticVarHandle(class$MemoryAccessOption, "ALLOW", class$MemoryAccessOption).get()
+                );
+            } catch (Throwable t) {
+                //  Java 25-
+            }
 
             init(unsafe, null, null, null);
             clearReflectionFilter();
