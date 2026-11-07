@@ -1,0 +1,26 @@
+Benchmark                     Mode  Cnt  Score   Error  Units
+Benchmark.customAccess        avgt   20  0.714 ± 0.006  ns/op
+Benchmark.customAccessFast    avgt   20  0.526 ± 0.001  ns/op
+Benchmark.customAccessFastSF  avgt   20  0.225 ± 0.002  ns/op
+Benchmark.customAccessSF      avgt   20  0.225 ± 0.002  ns/op
+Benchmark.customCall          avgt   20  0.569 ± 0.004  ns/op
+Benchmark.customCallSF        avgt   20  0.355 ± 0.003  ns/op
+Benchmark.customMutate        avgt   20  0.707 ± 0.003  ns/op
+Benchmark.customMutateFast    avgt   20  0.705 ± 0.005  ns/op
+Benchmark.customMutateFastSF  avgt   20  0.457 ± 0.004  ns/op
+Benchmark.customMutateSF      avgt   20  0.462 ± 0.014  ns/op
+Benchmark.directAccess        avgt   20  0.225 ± 0.002  ns/op
+Benchmark.directCall          avgt   20  0.375 ± 0.018  ns/op
+Benchmark.directMutate        avgt   20  0.474 ± 0.007  ns/op
+Benchmark.mhCall              avgt   20  2.156 ± 0.007  ns/op
+Benchmark.mhCallSF            avgt   20  0.369 ± 0.001  ns/op
+Benchmark.reflectAccess       avgt   20  2.780 ± 0.031  ns/op
+Benchmark.reflectAccessSF     avgt   20  0.422 ± 0.001  ns/op
+Benchmark.reflectCall         avgt   20  3.615 ± 0.025  ns/op
+Benchmark.reflectCallSF       avgt   20  0.604 ± 0.001  ns/op
+Benchmark.reflectMutate       avgt   20  3.289 ± 0.008  ns/op
+Benchmark.reflectMutateSF     avgt   20  0.451 ± 0.002  ns/op
+Benchmark.vhAccess            avgt   20  3.018 ± 0.015  ns/op
+Benchmark.vhAccessSF          avgt   20  0.230 ± 0.002  ns/op
+Benchmark.vhMutate            avgt   20  3.790 ± 0.010  ns/op
+Benchmark.vhMutateSF          avgt   20  0.468 ± 0.005  ns/op
