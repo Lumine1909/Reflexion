@@ -1,4 +1,4 @@
-### Reflexion
+﻿### Reflexion
 
 A "fast" and "powerful" lightweight Java reflection library.
 
@@ -7,7 +7,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("io.github.lumine1909:reflexion:0.5.2")
+    implementation("io.github.lumine1909:reflexion:0.6.0")
 }
 ```
 
@@ -19,44 +19,43 @@ You can check out the [related articles](https://lumine1909.github.io/categories
 
 Benchmark:
 
-| Benchmark          | Mode | Cnt | Score  | Error  | Units |
-|--------------------|------|-----|--------|--------|-------|
-| directAccess       | avgt | 20  | 0.472  | ±0.002 | ns/op |
-| directMutate       | avgt | 20  | 0.744  | ±0.021 | ns/op |
-| directCall         | avgt | 20  | 0.802  | ±0.010 | ns/op |
-|                    |      |     |        |        |       |
-| customAccess       | avgt | 20  | 1.341  | ±0.098 | ns/op |
-| customAccessFast   | avgt | 20  | 0.825  | ±0.044 | ns/op |
-| customAccessSF     | avgt | 20  | 0.464  | ±0.004 | ns/op |
-| customAccessFastSF | avgt | 20  | 0.471  | ±0.022 | ns/op |
-| customMutate       | avgt | 20  | 1.230  | ±0.007 | ns/op |
-| customMutateFast   | avgt | 20  | 1.186  | ±0.007 | ns/op |
-| customMutateSF     | avgt | 20  | 0.723  | ±0.004 | ns/op |
-| customMutateFastSF | avgt | 20  | 0.719  | ±0.007 | ns/op |
-| customCall         | avgt | 20  | 1.317  | ±0.008 | ns/op |
-| customCallSF       | avgt | 20  | 0.793  | ±0.008 | ns/op |
-|                    |      |     |        |        |       |
-| vhAccess           | avgt | 20  | 6.696  | ±0.122 | ns/op |
-| vhAccessSF         | avgt | 20  | 0.560  | ±0.007 | ns/op |
-| vhMutate           | avgt | 20  | 10.021 | ±0.294 | ns/op |
-| vhMutateSF         | avgt | 20  | 0.787  | ±0.011 | ns/op |
-| mhCall             | avgt | 20  | 4.510  | ±0.081 | ns/op |
-| mhCallSF           | avgt | 20  | 0.806  | ±0.005 | ns/op |
-|                    |      |     |        |        |       |
-| reflectAccess      | avgt | 20  | 6.232  | ±0.084 | ns/op |
-| reflectAccessSF    | avgt | 20  | 0.725  | ±0.014 | ns/op |
-| reflectMutate      | avgt | 20  | 6.875  | ±0.627 | ns/op |
-| reflectMutateSF    | avgt | 20  | 1.017  | ±0.103 | ns/op |
-| reflectCall        | avgt | 20  | 10.563 | ±0.820 | ns/op |
-| reflectCallSF      | avgt | 20  | 1.152  | ±0.014 | ns/op |
-
+| Benchmark          | Mode | Cnt | Score | Error  | Units |
+|--------------------|------|-----|-------|--------|-------|
+| directAccess       | avgt | 20  | 0.225 | ±0.002 | ns/op |
+| directMutate       | avgt | 20  | 0.474 | ±0.007 | ns/op |
+| directCall         | avgt | 20  | 0.375 | ±0.018 | ns/op |
+|                    |      |     |       |        |       |
+| customAccess       | avgt | 20  | 0.714 | ±0.006 | ns/op |
+| customAccessFast   | avgt | 20  | 0.526 | ±0.001 | ns/op |
+| customAccessSF     | avgt | 20  | 0.225 | ±0.002 | ns/op |
+| customAccessFastSF | avgt | 20  | 0.225 | ±0.002 | ns/op |
+| customMutate       | avgt | 20  | 0.707 | ±0.003 | ns/op |
+| customMutateFast   | avgt | 20  | 0.705 | ±0.005 | ns/op |
+| customMutateSF     | avgt | 20  | 0.468 | ±0.004 | ns/op |
+| customMutateFastSF | avgt | 20  | 0.455 | ±0.004 | ns/op |
+| customCall         | avgt | 20  | 0.569 | ±0.004 | ns/op |
+| customCallSF       | avgt | 20  | 0.355 | ±0.003 | ns/op |
+|                    |      |     |       |        |       |
+| vhAccess           | avgt | 20  | 3.018 | ±0.015 | ns/op |
+| vhAccessSF         | avgt | 20  | 0.230 | ±0.002 | ns/op |
+| vhMutate           | avgt | 20  | 3.790 | ±0.010 | ns/op |
+| vhMutateSF         | avgt | 20  | 0.468 | ±0.005 | ns/op |
+| mhCall             | avgt | 20  | 2.156 | ±0.007 | ns/op |
+| mhCallSF           | avgt | 20  | 0.369 | ±0.001 | ns/op |
+|                    |      |     |       |        |       |
+| reflectAccess      | avgt | 20  | 2.780 | ±0.031 | ns/op |
+| reflectAccessSF    | avgt | 20  | 0.422 | ±0.001 | ns/op |
+| reflectMutate      | avgt | 20  | 3.289 | ±0.008 | ns/op |
+| reflectMutateSF    | avgt | 20  | 0.451 | ±0.002 | ns/op |
+| reflectCall        | avgt | 20  | 3.615 | ±0.025 | ns/op |
+| reflectCallSF      | avgt | 20  | 0.604 | ±0.001 | ns/op |
 `SF`: static final modifier.
 
 Environment:
 ```
-java version "25.0.3" 2026-04-21 LTS
-Java(TM) SE Runtime Environment Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS-jvmci-b01)
-Java HotSpot(TM) 64-Bit Server VM Oracle GraalVM 25.0.3+9.1 (build 25.0.3+9-LTS-jvmci-b01, mixed mode, sharing)
+java version "25.0.4" 2026-07-21 LTS
+Java(TM) SE Runtime Environment Oracle GraalVM 25.0.4+7.1 (build 25.0.4+7-LTS-jvmci-b01)
+Java HotSpot(TM) 64-Bit Server VM Oracle GraalVM 25.0.4+7.1 (build 25.0.4+7-LTS-jvmci-b01, mixed mode, sharing)
 ```
 
 You can clone this repo and run the benchmark yourself, or check the action page for ci benchmark.

@@ -2,12 +2,13 @@ package io.github.lumine1909.reflexion.internal;
 
 import io.github.lumine1909.reflexion.exception.OperationException;
 import sun.misc.Unsafe;
+import sun.reflect.ReflectionFactory;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings({"DataFlowIssue", "deprecation", "removal"})
@@ -24,14 +25,26 @@ public final class UnsafeUtil {
     private static final MethodHandle mh$staticFieldOffset = null;
 
     private static final java.lang.Class<?> class$Reflection = null;
-    private static final VarHandle vh$fieldFilterMap = null;
-    private static final VarHandle vh$methodFilterMap = null;
+    private static final MethodHandle vh$fieldFilterMap = null;
+    private static final MethodHandle vh$methodFilterMap = null;
 
     static {
         try {
             Field field$unsafe = Unsafe.class.getDeclaredField("theUnsafe");
             field$unsafe.setAccessible(true);
             Unsafe unsafe = (Unsafe) field$unsafe.get(null);
+
+            try {
+                MethodHandles.Lookup implLookup = (MethodHandles.Lookup) ReflectionFactory.getReflectionFactory().newConstructorForSerialization(
+                    MethodHandles.Lookup.class, MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, Class.class, int.class)
+                ).newInstance(Object.class, null, -1);
+                Class<?> class$MemoryAccessOption = Class.forName("sun.misc.Unsafe$MemoryAccessOption");
+                implLookup.findStaticSetter(Unsafe.class, "MEMORY_ACCESS_OPTION", class$MemoryAccessOption).invoke(
+                    implLookup.findStaticGetter(class$MemoryAccessOption, "ALLOW", class$MemoryAccessOption).invoke()
+                );
+            } catch (Throwable t) {
+                //  Java 25-
+            }
 
             init(unsafe, null, null, null);
             clearReflectionFilter();
@@ -95,11 +108,11 @@ public final class UnsafeUtil {
                 putStatic(UnsafeUtil.class, "class$Reflection", class$Reflection);
             }
             if (vh$fieldFilterMap == null) {
-                VarHandle vh$fieldFilterMap = IMPL_LOOKUP.findStaticVarHandle(class$Reflection, "fieldFilterMap", Map.class);
+                MethodHandle vh$fieldFilterMap = IMPL_LOOKUP.findStaticSetter(class$Reflection, "fieldFilterMap", Map.class);
                 putStatic(UnsafeUtil.class, "vh$fieldFilterMap", vh$fieldFilterMap);
             }
             if (vh$methodFilterMap == null) {
-                VarHandle vh$methodFilterMap = IMPL_LOOKUP.findStaticVarHandle(class$Reflection, "methodFilterMap", Map.class);
+                MethodHandle vh$methodFilterMap = IMPL_LOOKUP.findStaticSetter(class$Reflection, "methodFilterMap", Map.class);
                 putStatic(UnsafeUtil.class, "vh$methodFilterMap", vh$methodFilterMap);
             }
         } catch (Throwable t) {
@@ -154,8 +167,8 @@ public final class UnsafeUtil {
 
     public static void clearReflectionFilter() {
         try {
-            vh$fieldFilterMap.set(Map.of());
-            vh$methodFilterMap.set(Map.of());
+            vh$fieldFilterMap.invoke(new HashMap<>());
+            vh$methodFilterMap.invoke(new HashMap<>());
         } catch (Throwable t) {
             throw new OperationException(t);
         }

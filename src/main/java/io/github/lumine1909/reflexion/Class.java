@@ -7,7 +7,6 @@ import io.github.lumine1909.reflexion.internal.UnsafeUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
-import java.lang.invoke.VarHandle;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
@@ -17,7 +16,7 @@ import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 /**
  * A high-level wrapper around {@link java.lang.Class} that provides
  * fast, unsafe, and flexible reflective access using
- * {@link MethodHandle}, {@link VarHandle}, and {@code Unsafe}.
+ * {@link MethodHandle}, and {@code Unsafe}.
  *
  * <p>This abstraction prioritizes performance and capability over safety:
  * <ul>
@@ -126,14 +125,13 @@ public final class Class<T> {
         try {
             UnsafeUtil.clearReflectionFilter();
             java.lang.reflect.Field field = javaClass.getDeclaredField(name);
-            VarHandle vh = IMPL_LOOKUP.unreflectVarHandle(field);
             boolean isStatic = Modifier.isStatic(field.getModifiers());
-            return new Field<>(field, isStatic ? 1 : 0, new UnsafeField(field), vh);
+            return new Field<>(field, isStatic ? 1 : 0, new UnsafeField(field));
         } catch (Throwable ignored) {
         }
         try {
             // Internal fields, this should never happen
-            return new Field<>(null, -1, new UnsafeField(javaClass, name), null);
+            return new Field<>(null, -1, new UnsafeField(javaClass, name));
         } catch (Throwable ignored) {
         }
 

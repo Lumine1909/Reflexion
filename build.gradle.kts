@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.lumine1909"
-version = "0.5.2"
+version = "0.6.0"
 
 repositories {
     mavenCentral()
@@ -28,6 +28,10 @@ tasks {
     withType<Javadoc> {
         isFailOnError = false
         options.encoding = "UTF-8"
+    }
+    named<JavaCompile>("compileTestJava") {
+        sourceCompatibility = "21"
+        targetCompatibility = "21"
     }
 }
 
@@ -60,10 +64,13 @@ mavenPublishing {
             url.set("https://github.com/Lumine1909/Reflexion")
         }
     }
-
     signing.useGpgCmd()
     publishToMavenCentral(true)
     signAllPublications()
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}

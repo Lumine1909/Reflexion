@@ -1,12 +1,8 @@
 package io.github.lumine1909.reflexion;
 
-import io.github.lumine1909.reflexion.exception.OperationException;
 import io.github.lumine1909.reflexion.internal.UnsafeField;
-import io.github.lumine1909.reflexion.internal.VarHolder;
 
 import java.lang.Class;
-import java.lang.invoke.VarHandle;
-import java.util.function.Supplier;
 
 /**
  * A high-performance wrapper around {@link java.lang.reflect.Field} that provides unsafe and varhandle-based access.
@@ -14,7 +10,6 @@ import java.util.function.Supplier;
  * <p>This abstraction supports:
  * <ul>
  *   <li>Bypassing Java access checks</li>
- *   <li>Fast field access via inlined {@link VarHandle}</li>
  *   <li>Fallback to {@code Unsafe}-based access</li>
  * </ul>
  *
@@ -28,15 +23,11 @@ public final class Field<T> {
     private final java.lang.reflect.Field javaField;
     private final UnsafeField unsafe;
     private final int staticFlag;
-    private final VarHandle handle;
-    private final Supplier<VarHandle> inline;
 
-    public Field(java.lang.reflect.Field javaField, int staticFlag, UnsafeField unsafe, VarHandle handle) {
+    public Field(java.lang.reflect.Field javaField, int staticFlag, UnsafeField unsafe) {
         this.javaField = javaField;
         this.staticFlag = staticFlag;
         this.unsafe = unsafe;
-        this.handle = handle;
-        this.inline = VarHolder.inline(handle);
     }
 
     /**
@@ -99,15 +90,6 @@ public final class Field<T> {
     }
 
     /**
-     * Returns wrapped Java {@link VarHandle} object.
-     *
-     * @return wrapped Java field, nullable
-     */
-    public VarHandle handle() {
-        return handle;
-    }
-
-    /**
      * Returns whether this field is static.
      *
      * @return {@code true} if the field is static
@@ -126,27 +108,6 @@ public final class Field<T> {
         return (T) unsafe.get(instance);
     }
 
-    /**
-     * Reads the field value using an inlined {@link VarHandle} when available.
-     *
-     * <p>This method is typically faster than {@link #get(Object)}.</p>
-     *
-     * @param instance target instance, or {@code null} for static fields
-     * @return field value
-     * @throws OperationException if access fails
-     */
-    public T getFast(Object instance) {
-        try {
-            if (inline != null) {
-                VarHandle vh = inline.get();
-                return (T) (instance == null ? vh.get() : vh.get(instance));
-            } else {
-                return get(instance);
-            }
-        } catch (Throwable t) {
-            throw new OperationException(t);
-        }
-    }
 
     /**
      * Reads the field value without static typing.
@@ -159,26 +120,6 @@ public final class Field<T> {
         return (S) unsafe.get(instance);
     }
 
-    /**
-     * Reads field value without static typing using an inlined {@link VarHandle}.
-     *
-     * @param instance target instance, or {@code null} for static fields
-     * @param <S>      expected return type
-     * @return field value
-     * @throws OperationException if access fails
-     */
-    public <S> S getUntypedFast(Object instance) {
-        try {
-            if (inline != null) {
-                VarHandle vh = inline.get();
-                return (S) (instance == null ? vh.get() : vh.get(instance));
-            } else {
-                return getUntyped(instance);
-            }
-        } catch (Throwable t) {
-            throw new OperationException(t);
-        }
-    }
 
     /**
      * Writes a value to the field.
@@ -188,32 +129,6 @@ public final class Field<T> {
      */
     public void set(Object instance, T value) {
         unsafe.set(instance, value);
-    }
-
-    /**
-     * Writes a value to the field using an inlined {@link VarHandle} when available.
-     *
-     * <p>This method is typically faster than {@link #set(Object, Object)}.</p>
-     *
-     * @param instance target instance, or {@code null} for static fields
-     * @param value    new field value
-     * @throws OperationException if access fails
-     */
-    public void setFast(Object instance, T value) {
-        try {
-            if (inline != null) {
-                VarHandle vh = inline.get();
-                if (instance == null) {
-                    vh.set(value);
-                } else {
-                    vh.set(instance, value);
-                }
-            } else {
-                set(instance, value);
-            }
-        } catch (Throwable t) {
-            throw new OperationException(t);
-        }
     }
 
     /**

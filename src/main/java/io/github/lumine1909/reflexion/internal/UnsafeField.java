@@ -8,21 +8,21 @@ import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 @SuppressWarnings({"DataFlowIssue", "deprecation", "removal"})
 public final class UnsafeField {
 
-    private final int staticFlag;
+    private final boolean staticFlag;
     private final Object staticBase;
     private final long offset;
     private final Type type;
 
     public UnsafeField(Field javaField) {
         boolean isStatic = Modifier.isStatic(javaField.getModifiers());
-        this.staticFlag = isStatic ? 1 : 0;
+        this.staticFlag = isStatic;
         this.staticBase = isStatic ? UnsafeUtil.staticFieldBase(javaField) : null;
         this.offset = isStatic ? UnsafeUtil.staticFieldOffset(javaField) : UnsafeUtil.objectFieldOffset(javaField);
         this.type = getType(javaField);
     }
 
     public UnsafeField(Class<?> clazz, String name) {
-        this.staticFlag = -1;
+        this.staticFlag = false;
         this.staticBase = clazz;
         this.offset = UnsafeUtil.fieldOffset(clazz, name);
         this.type = Type.NULL;
@@ -42,7 +42,7 @@ public final class UnsafeField {
     }
 
     private Object base(Object object) {
-        return (staticFlag == 1 || object == null) ? staticBase : object;
+        return (staticFlag || object == null) ? staticBase : object;
     }
 
     public Object get(Object object) {
@@ -54,32 +54,52 @@ public final class UnsafeField {
     }
 
     private Object get0(Object base, long offset) {
-        return switch (type) {
-            case OBJECT -> UNSAFE.getObject(base, offset);
-            case BYTE -> UNSAFE.getByte(base, offset);
-            case SHORT -> UNSAFE.getShort(base, offset);
-            case INT -> UNSAFE.getInt(base, offset);
-            case LONG -> UNSAFE.getLong(base, offset);
-            case FLOAT -> UNSAFE.getFloat(base, offset);
-            case DOUBLE -> UNSAFE.getDouble(base, offset);
-            case CHAR -> UNSAFE.getChar(base, offset);
-            case BOOLEAN -> UNSAFE.getBoolean(base, offset);
-            case NULL -> throw new UnsupportedOperationException("Unknown type");
-        };
+        switch (type) {
+            case OBJECT: return UNSAFE.getObject(base, offset);
+            case BYTE: return UNSAFE.getByte(base, offset);
+            case INT: return UNSAFE.getInt(base, offset);
+            case SHORT: return UNSAFE.getShort(base, offset);
+            case LONG: return UNSAFE.getLong(base, offset);
+            case FLOAT: return UNSAFE.getFloat(base, offset);
+            case DOUBLE: return UNSAFE.getDouble(base, offset);
+            case CHAR: return UNSAFE.getChar(base, offset);
+            case BOOLEAN: return UNSAFE.getBoolean(base, offset);
+            case NULL:
+            default: throw new UnsupportedOperationException("Unknown type");
+        }
     }
 
     private void set0(Object base, long offset, Object value) {
         switch (type) {
-            case OBJECT -> UNSAFE.putObject(base, offset, value);
-            case BYTE -> UNSAFE.putByte(base, offset, (byte) value);
-            case SHORT -> UNSAFE.putShort(base, offset, (short) value);
-            case INT -> UNSAFE.putInt(base, offset, (int) value);
-            case LONG -> UNSAFE.putLong(base, offset, (long) value);
-            case FLOAT -> UNSAFE.putFloat(base, offset, (float) value);
-            case DOUBLE -> UNSAFE.putDouble(base, offset, (double) value);
-            case CHAR -> UNSAFE.putChar(base, offset, (char) value);
-            case BOOLEAN -> UNSAFE.putBoolean(base, offset, (boolean) value);
-            case NULL -> throw new UnsupportedOperationException("Unknown type");
+            case OBJECT:
+                UNSAFE.putObject(base, offset, value);
+                return;
+            case BYTE:
+                UNSAFE.putByte(base, offset, (byte) value);
+                return;
+            case INT:
+                UNSAFE.putInt(base, offset, (int) value);
+                return;
+            case SHORT:
+                UNSAFE.putShort(base, offset, (short) value);
+                return;
+            case LONG:
+                UNSAFE.putLong(base, offset, (long) value);
+                return;
+            case FLOAT:
+                UNSAFE.putFloat(base, offset, (float) value);
+                return;
+            case DOUBLE:
+                UNSAFE.putDouble(base, offset, (double) value);
+                return;
+            case CHAR:
+                UNSAFE.putChar(base, offset, (char) value);
+                return;
+            case BOOLEAN:
+                UNSAFE.putBoolean(base, offset, (boolean) value);
+                return;
+            case NULL:
+                throw new UnsupportedOperationException("Unknown type");
         }
     }
 
