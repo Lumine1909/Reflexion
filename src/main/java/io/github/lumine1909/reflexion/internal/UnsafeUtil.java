@@ -73,7 +73,11 @@ public final class UnsafeUtil {
             }
             if (UnsafeUtil.class$InternalUnsafe == null) {
                 if (class$InternalUnsafe == null) {
-                    class$InternalUnsafe = Class.forName("jdk.internal.misc.Unsafe");
+                    try {
+                        class$InternalUnsafe = Class.forName("jdk.internal.misc.Unsafe");
+                    } catch (Throwable t) {
+                        class$InternalUnsafe = Unsafe.class;
+                    }
                 }
                 Field f = UnsafeUtil.class.getDeclaredField("class$InternalUnsafe");
                 UNSAFE.putObject(UnsafeUtil.class, UNSAFE.staticFieldOffset(f), class$InternalUnsafe);
@@ -87,9 +91,12 @@ public final class UnsafeUtil {
                 UNSAFE.putObject(UnsafeUtil.class, UNSAFE.staticFieldOffset(f), internalUnsafe);
             }
             if (mh$fieldOffset == null) {
-                MethodHandle fieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "objectFieldOffset", MethodType.methodType(long.class, Class.class, String.class));
-                Field f = UnsafeUtil.class.getDeclaredField("mh$fieldOffset");
-                UNSAFE.putObject(UnsafeUtil.class, UNSAFE.staticFieldOffset(f), fieldOffset);
+                try {
+                    MethodHandle fieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "objectFieldOffset", MethodType.methodType(long.class, Class.class, String.class));
+                    Field f = UnsafeUtil.class.getDeclaredField("mh$fieldOffset");
+                    UNSAFE.putObject(UnsafeUtil.class, UNSAFE.staticFieldOffset(f), fieldOffset);
+                } catch (Throwable t) {
+                }
             }
             if (mh$objectFieldOffset == null) {
                 MethodHandle objectFieldOffset = IMPL_LOOKUP.findVirtual(class$InternalUnsafe, "objectFieldOffset", MethodType.methodType(long.class, Field.class));
@@ -104,7 +111,12 @@ public final class UnsafeUtil {
                 UNSAFE.putObject(UnsafeUtil.class, staticFieldOffset(UnsafeUtil.class.getDeclaredField("mh$staticFieldOffset")), staticFieldOffset);
             }
             if (class$Reflection == null) {
-                Class<?> class$Reflection = Class.forName("jdk.internal.reflect.Reflection");
+                Class<?> class$Reflection;
+                try {
+                    class$Reflection = Class.forName("jdk.internal.reflect.Reflection");
+                } catch (Throwable t) {
+                    class$Reflection = Class.forName("sun.reflect.Reflection");
+                }
                 putStatic(UnsafeUtil.class, "class$Reflection", class$Reflection);
             }
             if (vh$fieldFilterMap == null) {
@@ -179,7 +191,7 @@ public final class UnsafeUtil {
         try {
             offset = fieldOffset(clazz, name);
         } catch (OperationException e) {
-            // Java 26 will fall back to here
+            // Java 26 or 8 will fall back to here
             offset = staticFieldOffset(clazz.getDeclaredField(name));
         }
         UNSAFE.putObject(clazz, offset, value);
