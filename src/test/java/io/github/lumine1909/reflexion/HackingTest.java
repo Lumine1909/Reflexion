@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.IntSupplier;
 
 import static io.github.lumine1909.reflexion.internal.UnsafeUtil.INTERNAL_UNSAFE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,6 +29,16 @@ public class HackingTest {
         assertEquals("testString", str);
         field$value.set(str, "hackedString".getBytes(StandardCharsets.UTF_8));
         assertEquals("hackedString", str);
+    }
+
+    @Test
+    public void testHackHidden() {
+        int i = 42;
+        IntSupplier supplier = () -> i;
+        assertEquals(42, supplier.getAsInt());
+        Field<Integer> field$arg$1 = Field.of(supplier.getClass(), "arg$1");
+        field$arg$1.set(supplier, 43);
+        assertEquals(43, supplier.getAsInt());
     }
 
     @SuppressWarnings("removal")
