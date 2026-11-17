@@ -49,6 +49,7 @@ Benchmark:
 | reflectMutateSF    | avgt | 20  | 0.451 | ±0.002 | ns/op |
 | reflectCall        | avgt | 20  | 3.615 | ±0.025 | ns/op |
 | reflectCallSF      | avgt | 20  | 0.604 | ±0.001 | ns/op |
+
 `SF`: static final modifier.
 
 Environment:
