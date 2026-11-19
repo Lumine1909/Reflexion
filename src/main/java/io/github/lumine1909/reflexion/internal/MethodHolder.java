@@ -21,7 +21,7 @@ public final class MethodHolder {
             UnsafeUtil.putStatic(MethodHolder.class, "o" + index, handle);
             return OBJ[index];
         } catch (Throwable t) {
-            return null;
+            return () -> handle;
         }
     }
 }
