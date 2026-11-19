@@ -1,7 +1,7 @@
 package io.github.lumine1909.reflexion;
 
 import io.github.lumine1909.reflexion.exception.OperationException;
-import io.github.lumine1909.reflexion.internal.MethodHolder;
+import io.github.lumine1909.reflexion.internal.MethodUtil;
 
 import java.lang.Class;
 import java.lang.invoke.MethodHandle;
@@ -40,7 +40,7 @@ public final class Method<T> {
         this.flag = flag;
         this.noInstance = (flag & NO_INSTANCE) == NO_INSTANCE;
         this.handle = handle;
-        this.invoker = MethodHolder.inline(paramCount <= 4 ? handle : spreader(handle, noInstance));
+        this.invoker = MethodUtil.inline(paramCount <= 4 ? handle : spreader(handle, noInstance));
     }
 
     /**
