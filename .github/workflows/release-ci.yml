@@ -7,24 +7,27 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
     permissions:
       contents: write
 
     steps:
       - uses: actions/checkout@v7
 
+      - name: Read commit subject
+        id: commit
+        run: echo "subject=$(git log -1 --format=%s)" >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-java@v6
         with:
           distribution: graalvm
           java-version: 25
 
-      - run: chmod +x ./gradlew
-
       - name: Run tests
+        if: "!contains(steps.commit.outputs.subject, '[ci skip]')"
         run: ./gradlew test
 
       - name: Build
+        if: "!contains(steps.commit.outputs.subject, '[ci skip]')"
         run: ./gradlew build
 
       - name: Get version
@@ -36,17 +39,15 @@ jobs:
         run: |
           git fetch --tags
           LAST=$(git tag -l "v${VERSION}-build-*" | sort -V | tail -n1)
-
           if [[ $LAST =~ -build-([0-9]+)$ ]]; then
             NEXT=$((BASH_REMATCH[1]+1))
           else
             NEXT=1
           fi
-
           echo "BUILD_NUMBER=$NEXT" >> $GITHUB_ENV
 
       - name: Create tag
-        if: "!contains(github.event.head_commit.message, '[release skip]')"
+        if: "!contains(steps.commit.outputs.subject, '[release skip]')"
         run: |
           TAG="v${VERSION}-build-${BUILD_NUMBER}"
           git config user.name github-actions
@@ -55,7 +56,7 @@ jobs:
           git push origin "$TAG"
 
       - name: Release
-        if: "!contains(github.event.head_commit.message, '[release skip]')"
+        if: "!contains(steps.commit.outputs.subject, '[release skip]')"
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ env.VERSION }}-build-${{ env.BUILD_NUMBER }}

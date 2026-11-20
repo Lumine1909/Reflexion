@@ -17,8 +17,6 @@ jobs:
           distribution: graalvm
           java-version: 25
 
-      - run: chmod +x ./gradlew
-
       - name: Run tests
         run: ./gradlew test
 
@@ -43,8 +41,6 @@ jobs:
         with:
           distribution: graalvm
           java-version: 25
-
-      - run: chmod +x ./gradlew
 
       - name: Run benchmark
         run: ./gradlew :benchmark:benchmark
