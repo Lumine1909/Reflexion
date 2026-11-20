@@ -1,8 +1,11 @@
 package io.github.lumine1909.reflexion;
 
-import io.github.lumine1909.reflexion.internal.UnsafeField;
+import io.github.lumine1909.reflexion.internal.UnsafeUtil;
 
 import java.lang.Class;
+import java.lang.reflect.Modifier;
+
+import static io.github.lumine1909.reflexion.internal.UnsafeUtil.UNSAFE;
 
 /**
  * A high-performance wrapper around {@link java.lang.reflect.Field} that provides unsafe and varhandle-based access.
@@ -17,17 +20,42 @@ import java.lang.Class;
  *
  * @param <T> the field type
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"DataFlowIssue", "deprecation", "removal", "unchecked"})
 public final class Field<T> {
 
     private final java.lang.reflect.Field javaField;
-    private final UnsafeField unsafe;
-    private final int staticFlag;
+    private final boolean isStatic;
+    private final Object staticBase;
+    private final long offset;
+    private final Type type;
 
-    public Field(java.lang.reflect.Field javaField, int staticFlag, UnsafeField unsafe) {
+    Field(java.lang.reflect.Field javaField) {
         this.javaField = javaField;
-        this.staticFlag = staticFlag;
-        this.unsafe = unsafe;
+        this.isStatic = Modifier.isStatic(javaField.getModifiers());
+        this.staticBase = isStatic ? UnsafeUtil.staticFieldBase(javaField) : null;
+        this.offset = isStatic ? UnsafeUtil.staticFieldOffset(javaField) : UnsafeUtil.objectFieldOffset(javaField);
+        this.type = getType(javaField);
+    }
+
+    Field(Class<?> clazz, String name) {
+        this.javaField = null;
+        this.isStatic = false;
+        this.staticBase = clazz;
+        this.offset = UnsafeUtil.fieldOffset(clazz, name);
+        this.type = Type.NULL;
+    }
+
+    private static Type getType(java.lang.reflect.Field javaField) {
+        Class<?> type = javaField.getType();
+        if (type == byte.class) return Type.BYTE;
+        if (type == int.class) return Type.INT;
+        if (type == short.class) return Type.SHORT;
+        if (type == long.class) return Type.LONG;
+        if (type == float.class) return Type.FLOAT;
+        if (type == double.class) return Type.DOUBLE;
+        if (type == char.class) return Type.CHAR;
+        if (type == boolean.class) return Type.BOOLEAN;
+        return Type.OBJECT;
     }
 
     /**
@@ -95,7 +123,7 @@ public final class Field<T> {
      * @return {@code true} if the field is static
      */
     public boolean isStatic() {
-        return staticFlag == 1;
+        return isStatic;
     }
 
     /**
@@ -105,9 +133,12 @@ public final class Field<T> {
      * @return the field value
      */
     public T get(Object instance) {
-        return (T) unsafe.get(instance);
+        return (T) get0(base(instance), offset);
     }
 
+    private Object base(Object object) {
+        return (isStatic || object == null) ? staticBase : object;
+    }
 
     /**
      * Reads the field value without static typing.
@@ -117,7 +148,7 @@ public final class Field<T> {
      * @return field value
      */
     public <S> S getUntyped(Object instance) {
-        return (S) unsafe.get(instance);
+        return (S) get0(base(instance), offset);
     }
 
 
@@ -128,7 +159,67 @@ public final class Field<T> {
      * @param value    new field value
      */
     public void set(Object instance, T value) {
-        unsafe.set(instance, value);
+        set0(base(instance), offset, value);
+    }
+
+    private Object get0(Object base, long offset) {
+        switch (type) {
+            case OBJECT:
+                return UNSAFE.getObject(base, offset);
+            case BYTE:
+                return UNSAFE.getByte(base, offset);
+            case INT:
+                return UNSAFE.getInt(base, offset);
+            case SHORT:
+                return UNSAFE.getShort(base, offset);
+            case LONG:
+                return UNSAFE.getLong(base, offset);
+            case FLOAT:
+                return UNSAFE.getFloat(base, offset);
+            case DOUBLE:
+                return UNSAFE.getDouble(base, offset);
+            case CHAR:
+                return UNSAFE.getChar(base, offset);
+            case BOOLEAN:
+                return UNSAFE.getBoolean(base, offset);
+            case NULL:
+            default:
+                throw new UnsupportedOperationException("Unknown type");
+        }
+    }
+
+    private void set0(Object base, long offset, Object value) {
+        switch (type) {
+            case OBJECT:
+                UNSAFE.putObject(base, offset, value);
+                return;
+            case BYTE:
+                UNSAFE.putByte(base, offset, (byte) value);
+                return;
+            case INT:
+                UNSAFE.putInt(base, offset, (int) value);
+                return;
+            case SHORT:
+                UNSAFE.putShort(base, offset, (short) value);
+                return;
+            case LONG:
+                UNSAFE.putLong(base, offset, (long) value);
+                return;
+            case FLOAT:
+                UNSAFE.putFloat(base, offset, (float) value);
+                return;
+            case DOUBLE:
+                UNSAFE.putDouble(base, offset, (double) value);
+                return;
+            case CHAR:
+                UNSAFE.putChar(base, offset, (char) value);
+                return;
+            case BOOLEAN:
+                UNSAFE.putBoolean(base, offset, (boolean) value);
+                return;
+            case NULL:
+                throw new UnsupportedOperationException("Unknown type");
+        }
     }
 
     /**
@@ -138,7 +229,7 @@ public final class Field<T> {
      * @return field object value
      */
     public Object getObject(Object instance) {
-        return unsafe.getObject(instance);
+        return UNSAFE.getObject(base(instance), offset);
     }
 
     /**
@@ -148,7 +239,7 @@ public final class Field<T> {
      * @param value    new field object value
      */
     public void setObject(Object instance, Object value) {
-        unsafe.setObject(instance, value);
+        UNSAFE.putObject(base(instance), offset, value);
     }
 
     /**
@@ -158,7 +249,7 @@ public final class Field<T> {
      * @return field byte value
      */
     public byte getByte(Object instance) {
-        return unsafe.getByte(instance);
+        return UNSAFE.getByte(base(instance), offset);
     }
 
     /**
@@ -168,7 +259,7 @@ public final class Field<T> {
      * @param value    new field byte value
      */
     public void setByte(Object instance, byte value) {
-        unsafe.setByte(instance, value);
+        UNSAFE.putByte(base(instance), offset, value);
     }
 
     /**
@@ -178,7 +269,7 @@ public final class Field<T> {
      * @return field short value
      */
     public short getShort(Object instance) {
-        return unsafe.getShort(instance);
+        return UNSAFE.getShort(base(instance), offset);
     }
 
     /**
@@ -188,7 +279,7 @@ public final class Field<T> {
      * @param value    new field short value
      */
     public void setShort(Object instance, short value) {
-        unsafe.setShort(instance, value);
+        UNSAFE.putShort(base(instance), offset, value);
     }
 
     /**
@@ -198,7 +289,7 @@ public final class Field<T> {
      * @return field int value
      */
     public int getInt(Object instance) {
-        return unsafe.getInt(instance);
+        return UNSAFE.getInt(base(instance), offset);
     }
 
     /**
@@ -208,7 +299,7 @@ public final class Field<T> {
      * @param value    new field int value
      */
     public void setInt(Object instance, int value) {
-        unsafe.setInt(instance, value);
+        UNSAFE.putInt(base(instance), offset, value);
     }
 
     /**
@@ -218,7 +309,7 @@ public final class Field<T> {
      * @return field long value
      */
     public long getLong(Object instance) {
-        return unsafe.getLong(instance);
+        return UNSAFE.getLong(base(instance), offset);
     }
 
     /**
@@ -228,7 +319,7 @@ public final class Field<T> {
      * @param value    new field long value
      */
     public void setLong(Object instance, long value) {
-        unsafe.setLong(instance, value);
+        UNSAFE.putLong(base(instance), offset, value);
     }
 
     /**
@@ -238,7 +329,7 @@ public final class Field<T> {
      * @return field float value
      */
     public float getFloat(Object instance) {
-        return unsafe.getFloat(instance);
+        return UNSAFE.getFloat(base(instance), offset);
     }
 
     /**
@@ -248,7 +339,7 @@ public final class Field<T> {
      * @param value    new field float value
      */
     public void setFloat(Object instance, float value) {
-        unsafe.setFloat(instance, value);
+        UNSAFE.putFloat(base(instance), offset, value);
     }
 
     /**
@@ -258,7 +349,7 @@ public final class Field<T> {
      * @return field double value
      */
     public double getDouble(Object instance) {
-        return unsafe.getDouble(instance);
+        return UNSAFE.getDouble(base(instance), offset);
     }
 
     /**
@@ -268,7 +359,7 @@ public final class Field<T> {
      * @param value    new field double value
      */
     public void setDouble(Object instance, double value) {
-        unsafe.setDouble(instance, value);
+        UNSAFE.putDouble(base(instance), offset, value);
     }
 
     /**
@@ -278,7 +369,7 @@ public final class Field<T> {
      * @return field char value
      */
     public char getChar(Object instance) {
-        return unsafe.getChar(instance);
+        return UNSAFE.getChar(base(instance), offset);
     }
 
     /**
@@ -288,7 +379,7 @@ public final class Field<T> {
      * @param value    new field char value
      */
     public void setChar(Object instance, char value) {
-        unsafe.setChar(instance, value);
+        UNSAFE.putChar(base(instance), offset, value);
     }
 
     /**
@@ -298,7 +389,7 @@ public final class Field<T> {
      * @return field boolean value
      */
     public boolean getBoolean(Object instance) {
-        return unsafe.getBoolean(instance);
+        return UNSAFE.getBoolean(base(instance), offset);
     }
 
     /**
@@ -308,6 +399,10 @@ public final class Field<T> {
      * @param value    new field boolean value
      */
     public void setBoolean(Object instance, boolean value) {
-        unsafe.setBoolean(instance, value);
+        UNSAFE.putBoolean(base(instance), offset, value);
+    }
+
+    private enum Type {
+        NULL, OBJECT, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR, BOOLEAN
     }
 }

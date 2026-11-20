@@ -2,7 +2,6 @@ package io.github.lumine1909.reflexion;
 
 import io.github.lumine1909.reflexion.exception.NotFoundException;
 import io.github.lumine1909.reflexion.exception.OperationException;
-import io.github.lumine1909.reflexion.internal.UnsafeField;
 import io.github.lumine1909.reflexion.internal.UnsafeUtil;
 
 import java.lang.invoke.MethodHandle;
@@ -125,13 +124,12 @@ public final class Class<T> {
         try {
             UnsafeUtil.clearReflectionFilter();
             java.lang.reflect.Field field = javaClass.getDeclaredField(name);
-            boolean isStatic = Modifier.isStatic(field.getModifiers());
-            return new Field<>(field, isStatic ? 1 : 0, new UnsafeField(field));
+            return new Field<>(field);
         } catch (Throwable ignored) {
         }
         try {
             // Internal fields, this should never happen
-            return new Field<>(null, -1, new UnsafeField(javaClass, name));
+            return new Field<>(javaClass, name);
         } catch (Throwable ignored) {
         }
 
