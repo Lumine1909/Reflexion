@@ -41,7 +41,7 @@ public final class Method<T> {
         this.flag = flag;
         this.noInstance = (flag & NO_INSTANCE) == NO_INSTANCE;
         this.handle = handle;
-        this.invoker = MethodUtil.inline(preprocess(handle, paramCount, noInstance));
+        this.invoker = MethodUtil.inline(convert(handle, paramCount, noInstance));
     }
 
     /**
@@ -105,7 +105,7 @@ public final class Method<T> {
         return clazz == null ? null : clazz.getMethod(name, flag, returnType, paramTypes);
     }
 
-    private static MethodHandle preprocess(MethodHandle handle, int paramCount, boolean noInstance) {
+    private static MethodHandle convert(MethodHandle handle, int paramCount, boolean noInstance) {
         if (noInstance) {
             handle = MethodHandles.dropArguments(handle, 0, Object.class);
         }
