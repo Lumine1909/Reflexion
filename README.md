@@ -7,7 +7,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("io.github.lumine1909:reflexion:0.6.2")
+    implementation("io.github.lumine1909:reflexion:0.7.0")
 }
 ```
 
@@ -33,8 +33,8 @@ Benchmark:
 | customMutateFast   | avgt | 20  | 0.561 | ±0.004 | ns/op |
 | customMutateSF     | avgt | 20  | 0.459 | ±0.006 | ns/op |
 | customMutateFastSF | avgt | 20  | 0.450 | ±0.009 | ns/op |
-| customCall         | avgt | 20  | 0.574 | ±0.003 | ns/op |
-| customCallSF       | avgt | 20  | 0.360 | ±0.008 | ns/op |
+| customCall         | avgt | 20  | 0.467 | ±0.002 | ns/op |
+| customCallSF       | avgt | 20  | 0.359 | ±0.001 | ns/op |
 |                    |      |     |       |        |       |
 | vhAccess           | avgt | 20  | 3.040 | ±0.036 | ns/op |
 | vhAccessSF         | avgt | 20  | 0.228 | ±0.004 | ns/op |

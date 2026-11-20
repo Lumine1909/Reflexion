@@ -37,7 +37,7 @@ public final class Class<T> {
 
     private final java.lang.Class<T> javaClass;
 
-    public Class(java.lang.Class<T> javaClass) {
+    private Class(java.lang.Class<T> javaClass) {
         this.javaClass = javaClass;
     }
 
