@@ -31,7 +31,6 @@ public final class Method<T> {
     private final java.lang.reflect.Method javaMethod;
     private final int paramCount;
     private final int flag;
-    private final boolean noInstance;
     private final MethodHandle handle;
     private final Supplier<MethodHandle> invoker;
 
@@ -39,9 +38,8 @@ public final class Method<T> {
         this.javaMethod = javaMethod;
         this.paramCount = paramCount;
         this.flag = flag;
-        this.noInstance = (flag & NO_INSTANCE) == NO_INSTANCE;
         this.handle = handle;
-        this.invoker = MethodUtil.inline(convert(handle, paramCount, noInstance));
+        this.invoker = MethodUtil.inline(convert(handle, paramCount, (flag & NO_INSTANCE) == NO_INSTANCE));
     }
 
     /**

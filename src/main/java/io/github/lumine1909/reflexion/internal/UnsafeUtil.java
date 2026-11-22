@@ -132,7 +132,6 @@ public final class UnsafeUtil {
         }
     }
 
-
     public static long objectFieldOffset(Field field) {
         try {
             return UNSAFE.objectFieldOffset(field);
